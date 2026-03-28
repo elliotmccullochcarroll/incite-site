@@ -1143,7 +1143,7 @@
       });
     });
 
-    document.getElementById("mockBodyWrap").addEventListener("click", (e) => {
+    document.addEventListener("click", (e) => {
       if (!e.target.closest(".demo-flag") && !e.target.closest(".mock-tt")) closeTooltip();
     });
 
