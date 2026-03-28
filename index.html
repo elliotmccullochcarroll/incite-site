@@ -1114,6 +1114,9 @@
     function runDrawSequence() {
       if (underlinesDrawn) return;
       underlinesDrawn = true;
+      // Draw "Click one" subtitle underline immediately
+      const clickOne = document.querySelector(".demo-section .u-draw");
+      if (clickOne) setTimeout(() => clickOne.classList.add("drawn"), 200);
       // 1. Show streaming cursor
       streamCursor.style.display = "inline-block";
       // 2. After 600ms, hide cursor, show scanning, and start drawing first underline simultaneously
