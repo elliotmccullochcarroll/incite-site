@@ -224,59 +224,42 @@
     .steps {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 0;
-      position: relative;
+      gap: 2px;
+      background: var(--border);
+      border-radius: 18px;
+      overflow: hidden;
     }
-    .steps::before {
-      content: "";
-      position: absolute;
-      top: 36px;
-      left: calc(12.5% + 8px);
-      right: calc(12.5% + 8px);
-      height: 1px;
-      background: linear-gradient(to right, var(--border), var(--accent), var(--border));
-      z-index: 0;
-    }
-    @media (max-width: 768px) { .steps { grid-template-columns: 1fr 1fr; } .steps::before { display: none; } }
+    @media (max-width: 768px) { .steps { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 480px) { .steps { grid-template-columns: 1fr; } }
 
     .step {
       background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 28px 24px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-      transition: box-shadow 0.2s, transform 0.2s;
-      margin: 0 8px;
-      position: relative;
-      z-index: 1;
+      padding: 0 28px 28px;
+      transition: background 0.15s;
     }
-    .step:hover {
-      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-      transform: translateY(-2px);
-    }
-    .step-num {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.8px;
-      color: var(--faint);
-      margin-bottom: 16px;
+    .step:hover { background: #FDFCFA; }
+    .step:hover .step-bar { background: var(--accent); }
+    .step-bar {
+      height: 3px;
+      background: var(--border);
+      margin: 0 -28px 24px;
+      transition: background 0.2s;
     }
     .step-icon {
-      font-size: 24px;
+      font-size: 20px;
       margin-bottom: 14px;
       display: block;
     }
     .step h3 {
       font-size: 14px;
-      font-weight: 650;
+      font-weight: 700;
       color: var(--text);
       margin-bottom: 7px;
     }
     .step p {
       font-size: 13px;
       color: var(--muted);
-      line-height: 1.6;
+      line-height: 1.65;
     }
 
     /* ── Signals ── */
@@ -1235,25 +1218,25 @@
 
     <div class="steps">
       <div class="step">
-        <div class="step-num">01</div>
+        <div class="step-bar"></div>
         <span class="step-icon">🔍</span>
         <h3>Detects signals</h3>
         <p>Pattern matching and a background AI check scan each sentence for high-risk structures.</p>
       </div>
       <div class="step">
-        <div class="step-num">02</div>
+        <div class="step-bar"></div>
         <span class="step-icon">〰</span>
         <h3>Underlines risk</h3>
         <p>Flagged sentences are underlined directly in Claude's UI — no separate window, no copy-paste.</p>
       </div>
       <div class="step">
-        <div class="step-num">03</div>
+        <div class="step-bar"></div>
         <span class="step-icon">↗</span>
         <h3>Points to sources</h3>
         <p>Each signal links to the right place — PubMed for medical, Scholar for citations, Justia for legal.</p>
       </div>
       <div class="step">
-        <div class="step-num">04</div>
+        <div class="step-bar"></div>
         <span class="step-icon">✓</span>
         <h3>You decide</h3>
         <p>Resolve signals you've checked. The score updates live so you know what's left to verify.</p>
