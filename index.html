@@ -1140,18 +1140,28 @@
     }
 
     function positionTooltip(anchorEl) {
-      const tt        = document.getElementById("mockTT");
-      const frame     = document.querySelector(".demo-frame");
-      const frameRect = frame.getBoundingClientRect();
-      const spanRect  = anchorEl.getBoundingClientRect();
-      const ttWidth   = 290;
-      const pad       = 14;
+      const tt          = document.getElementById("mockTT");
+      const frame       = document.querySelector(".demo-frame");
+      const browser     = document.querySelector(".mock-browser");
+      const frameRect   = frame.getBoundingClientRect();
+      const browserRect = browser.getBoundingClientRect();
+      const spanRect    = anchorEl.getBoundingClientRect();
+      const ttWidth     = 290;
+      const pad         = 14;
 
       let top  = spanRect.bottom - frameRect.top + 8;
       let left = spanRect.left   - frameRect.left;
 
+      // Clamp horizontally within frame
       if (left + ttWidth > frameRect.width - pad) left = frameRect.width - ttWidth - pad;
       if (left < pad) left = pad;
+
+      // Clamp vertically — flip above sentence if tooltip would exit the browser bottom
+      const browserBottom = browserRect.bottom - frameRect.top - pad;
+      const ttHeight = tt.offsetHeight || 240;
+      if (top + ttHeight > browserBottom) {
+        top = (spanRect.top - frameRect.top) - ttHeight - 8;
+      }
 
       tt.style.top  = top  + "px";
       tt.style.left = left + "px";
@@ -1161,11 +1171,12 @@
     const cursor = document.getElementById("demoCursor");
 
     function moveCursorTo(el, cb) {
-      const frame = document.querySelector(".demo-frame");
-      const fRect = frame.getBoundingClientRect();
+      // Cursor is position:absolute inside mockBodyWrap, so offset against that
+      const body  = document.getElementById("mockBodyWrap");
+      const bRect = body.getBoundingClientRect();
       const r     = el.getBoundingClientRect();
-      cursor.style.top  = (r.top  - fRect.top  + r.height * 0.55) + "px";
-      cursor.style.left = (r.left - fRect.left + r.width  * 0.45) + "px";
+      cursor.style.top  = (r.top  - bRect.top  + r.height * 0.55) + "px";
+      cursor.style.left = (r.left - bRect.left + r.width  * 0.45) + "px";
       setTimeout(cb, 950);
     }
 
