@@ -1348,11 +1348,25 @@
   </footer>
 
   <script>
-    // Scroll fade-in — runs after full DOM is parsed
+    // Scroll fade-in
     const fadeObserver = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("visible"); fadeObserver.unobserve(e.target); } });
-    }, { threshold: 0.1 });
-    document.querySelectorAll(".fade-up").forEach(el => fadeObserver.observe(el));
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add("visible");
+          fadeObserver.unobserve(e.target);
+        }
+      });
+    }, { rootMargin: "0px 0px -40px 0px", threshold: 0 });
+
+    document.querySelectorAll(".fade-up").forEach(el => {
+      // If already visible in viewport on load, show immediately
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight) {
+        el.classList.add("visible");
+      } else {
+        fadeObserver.observe(el);
+      }
+    });
 
     // Hero underline draw-in
     setTimeout(() => {
