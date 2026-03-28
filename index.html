@@ -1338,11 +1338,19 @@
   </footer>
 
   <script>
+    // Shared trigger: make section visible + draw any u-draw children
+    function revealSection(el) {
+      el.classList.add("visible");
+      el.querySelectorAll(".u-draw").forEach((u, i) => {
+        setTimeout(() => u.classList.add("drawn"), 300 + i * 200);
+      });
+    }
+
     // Scroll fade-in
     const fadeObserver = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (e.isIntersecting) {
-          e.target.classList.add("visible");
+          revealSection(e.target);
           fadeObserver.unobserve(e.target);
         }
       });
@@ -1350,21 +1358,20 @@
 
     document.querySelectorAll(".fade-up").forEach(el => {
       const rect = el.getBoundingClientRect();
-      if (rect.top < window.innerHeight) { el.classList.add("visible"); }
+      if (rect.top < window.innerHeight) { revealSection(el); }
       else { fadeObserver.observe(el); }
     });
 
-    // Underline draw-ins — observe each u-draw element directly
-    const drawObserverU = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          setTimeout(() => e.target.classList.add("drawn"), 200);
-          drawObserverU.unobserve(e.target);
-        }
-      });
-    }, { rootMargin: "0px 0px -60px 0px", threshold: 0 });
-
-    document.querySelectorAll(".u-draw").forEach(el => drawObserverU.observe(el));
+    // Handle u-draw in demo section (not a fade-up)
+    const demoUObserver = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        entries[0].target.querySelectorAll(".u-draw").forEach((u, i) => {
+          setTimeout(() => u.classList.add("drawn"), 300 + i * 200);
+        });
+        demoUObserver.disconnect();
+      }
+    }, { threshold: 0.2 });
+    demoUObserver.observe(document.querySelector(".demo-section"));
 
     // Hero underline draw-in
     setTimeout(() => {
