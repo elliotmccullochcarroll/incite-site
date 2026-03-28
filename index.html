@@ -377,51 +377,8 @@
       line-height: 1.65;
     }
 
-    /* Before/After toggle */
-    .demo-toggle-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 28px;
-    }
-    .demo-toggle-label {
-      font-size: 12.5px;
-      font-weight: 500;
-      color: var(--faint);
-      transition: color 0.2s;
-      user-select: none;
-    }
-    .demo-toggle-label.active { color: var(--text); }
-    .demo-toggle-btn {
-      width: 42px; height: 24px;
-      border-radius: 100px;
-      background: var(--accent);
-      border: none;
-      cursor: pointer;
-      position: relative;
-      flex-shrink: 0;
-      transition: background 0.2s;
-    }
-    .demo-toggle-btn.off { background: #C4BFBA; }
-    .demo-toggle-btn::after {
-      content: '';
-      position: absolute;
-      top: 3px; left: 21px;
-      width: 18px; height: 18px;
-      border-radius: 50%;
-      background: white;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-      transition: left 0.2s;
-    }
-    .demo-toggle-btn.off::after { left: 3px; }
-    /* When InCite is off, hide underlines and tooltip */
-    .incite-off .demo-flag {
-      background-size: 0% 2px !important;
-      cursor: default;
-    }
-    .incite-off .demo-flag:hover { background-color: transparent !important; }
-    .incite-off #mockTT { opacity: 0 !important; pointer-events: none !important; }
+    /* Demo frame — wraps browser + floating tooltip so tooltip isn't clipped */
+    .demo-frame { position: relative; }
 
     /* Browser chrome */
     .mock-browser {
@@ -675,36 +632,32 @@
     .demo-flag-active.u-info { background-color: rgba(138,174,80,0.14); }
 
     /* Right column — wraps the floating tooltip */
-    /* Inline floating tooltip */
+    /* Floating tooltip — lives outside .mock-browser so overflow:hidden can't clip it */
     .mock-tt {
       position: absolute;
-      width: 300px;
+      width: 290px;
       background: #201410;
       border-radius: 12px;
       border: 1px solid rgba(212,180,140,0.15);
       box-shadow: 0 16px 48px rgba(0,0,0,0.50), 0 2px 8px rgba(0,0,0,0.25);
       font-family: "Inter", -apple-system, sans-serif;
       font-size: 13px;
-      overflow: visible;
       color: #F4EFE8;
       z-index: 40;
       opacity: 0;
       transform: scale(0.95) translateY(4px);
       pointer-events: none;
-      transition: opacity 0.15s ease, transform 0.15s ease;
+      transition: opacity 0.18s ease, transform 0.18s ease;
     }
     .mock-tt.visible {
       opacity: 1;
       transform: scale(1) translateY(0);
-      pointer-events: auto;
     }
     .mock-tt-inner { border-radius: 12px; overflow: hidden; }
-    /* Arrow caret pointing up at the sentence */
     .mock-tt::before {
       content: '';
       position: absolute;
-      top: -6px;
-      left: 20px;
+      top: -6px; left: 22px;
       width: 0; height: 0;
       border-left: 6px solid transparent;
       border-right: 6px solid transparent;
@@ -1015,14 +968,9 @@
     <div class="demo-inner">
       <p class="section-label">Live preview</p>
       <h2>See it in action.</h2>
-      <p class="section-sub">Click any underlined sentence to see InCite's signal breakdown.</p>
+      <p class="section-sub">Watch InCite flag uncertainty in real time as Claude responds.</p>
 
-      <div class="demo-toggle-row">
-        <span class="demo-toggle-label" id="toggleLabelOff">Without InCite</span>
-        <button class="demo-toggle-btn" id="demoToggle" aria-label="Toggle InCite"></button>
-        <span class="demo-toggle-label active" id="toggleLabelOn">With InCite</span>
-      </div>
-
+      <div class="demo-frame">
       <div class="mock-browser">
         <div class="mock-tabs">
           <div class="mock-tab-active">
@@ -1080,28 +1028,28 @@
           </div>
 
         </div>
+      </div><!-- end mock-browser -->
 
-        <!-- Inline floating tooltip -->
-        <div class="mock-tt" id="mockTT">
-          <div class="mock-tt-inner">
-            <div class="mock-tt-hdr">
-              <img src="logo.svg" alt="">
-              <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.55)">InCite</span>
-              <span class="mock-tt-verdict" id="mockVerdict"></span>
-            </div>
-            <div class="mock-tt-tabs">
-              <div class="mock-tt-tab active">Simple</div>
-              <div class="mock-tt-tab">Advanced</div>
-            </div>
-            <div id="mockBody"></div>
-            <div class="mock-tt-footer">
-              <div class="mock-tt-improve">Suggest improvement</div>
-            </div>
+      <!-- Tooltip lives here, outside mock-browser, so overflow:hidden can't clip it -->
+      <div class="mock-tt" id="mockTT">
+        <div class="mock-tt-inner">
+          <div class="mock-tt-hdr">
+            <img src="logo.svg" alt="">
+            <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.55)">InCite</span>
+            <span class="mock-tt-verdict" id="mockVerdict"></span>
+          </div>
+          <div class="mock-tt-tabs">
+            <div class="mock-tt-tab active">Simple</div>
+            <div class="mock-tt-tab">Advanced</div>
+          </div>
+          <div id="mockBody"></div>
+          <div class="mock-tt-footer">
+            <div class="mock-tt-improve">Suggest improvement</div>
           </div>
         </div>
-
-        </div>
       </div>
+
+      </div><!-- end demo-frame -->
     </div>
   </div>
 
@@ -1131,8 +1079,6 @@
         ]
       }
     ];
-
-    let activeFlag = null;
 
     // Streaming cursor → scanning → underline draw-in sequence
     let underlinesDrawn = false;
@@ -1166,95 +1112,12 @@
     }, { threshold: 0.5 });
     drawObserver.observe(document.querySelector(".mock-browser"));
 
-    // Auto-cursor sequence
-    const cursor   = document.getElementById("demoCursor");
-    let autoTimer  = null;
-    let userTook   = false;
-
-    function moveCursorTo(el, cb) {
-      const bodyRect = document.getElementById("mockBodyWrap").getBoundingClientRect();
-      const r        = el.getBoundingClientRect();
-      cursor.style.top  = (r.top  - bodyRect.top  + r.height * 0.6) + "px";
-      cursor.style.left = (r.left - bodyRect.left + r.width  * 0.5) + "px";
-      setTimeout(cb, 950); // wait for transition
-    }
-
-    function autoCursorStep(idx) {
-      if (userTook) return;
-      const el = flags[idx];
-      cursor.classList.add("cursor-vis");
-      moveCursorTo(el, () => {
-        if (userTook) return;
-        // simulate click
-        cursor.classList.add("cursor-clicking");
-        setTimeout(() => cursor.classList.remove("cursor-clicking"), 500);
-        // trigger the tooltip
-        document.querySelectorAll(".demo-flag").forEach(f => f.classList.remove("demo-flag-active"));
-        activeFlag = idx;
-        el.classList.add("demo-flag-active");
-        renderPanel(idx);
-        const tt = document.getElementById("mockTT");
-        tt.classList.remove("visible");
-        requestAnimationFrame(() => { positionTooltip(el); tt.classList.add("visible"); });
-        // next sentence after pause, or hide cursor
-        const next = (idx + 1) % flags.length;
-        autoTimer = setTimeout(() => {
-          document.getElementById("mockTT").classList.remove("visible");
-          el.classList.remove("demo-flag-active");
-          activeFlag = null;
-          if (next === 0) {
-            cursor.classList.remove("cursor-vis");
-          } else {
-            autoCursorStep(next);
-          }
-        }, 3000);
-      });
-    }
-
-    // Start auto sequence 600ms after underlines finish drawing
-    function scheduleAutoSequence() {
-      const delay = flags.length * 500 + 600;
-      autoTimer = setTimeout(() => { if (!userTook) autoCursorStep(0); }, delay);
-    }
-
-    // Cancel auto sequence on any user click in the demo
-    document.getElementById("mockBodyWrap").addEventListener("click", () => {
-      userTook = true;
-      clearTimeout(autoTimer);
-      cursor.classList.remove("cursor-vis");
-    }, { capture: true });
-
-    // Before/After toggle
-    const demoToggle   = document.getElementById("demoToggle");
-    const mockBodyWrap = document.querySelector(".mock-body");
-    const labelOff     = document.getElementById("toggleLabelOff");
-    const labelOn      = document.getElementById("toggleLabelOn");
-    let inciteOn = true;
-
-    demoToggle.addEventListener("click", () => {
-      inciteOn = !inciteOn;
-      demoToggle.classList.toggle("off", !inciteOn);
-      mockBodyWrap.classList.toggle("incite-off", !inciteOn);
-      labelOff.classList.toggle("active", !inciteOn);
-      labelOn.classList.toggle("active",  inciteOn);
-      if (!inciteOn) {
-        document.querySelectorAll(".demo-flag").forEach(f => f.classList.remove("demo-flag-active"));
-        activeFlag = null;
-      } else if (underlinesDrawn) {
-        // Re-animate underlines when toggled back on
-        flags.forEach(f => f.classList.remove("drawn"));
-        flags.forEach((f, i) => setTimeout(() => f.classList.add("drawn"), i * 400));
-      }
-    });
-
     function renderPanel(idx) {
       const f       = FLAGS[idx];
       const verdict = document.getElementById("mockVerdict");
       const body    = document.getElementById("mockBody");
-
       verdict.textContent = f.verdict;
       verdict.className   = "mock-tt-verdict " + f.verdictClass;
-
       body.innerHTML = `
         <div class="mock-tt-why">
           <div class="mock-tt-why-label">Why flagged</div>
@@ -1270,15 +1133,6 @@
               <div class="mock-tt-row-body">${s.desc}</div>
             </div>`).join("")}
         </div>`;
-
-      // Wire accordion toggles
-      body.querySelectorAll(".mock-tt-row").forEach(row => {
-        row.querySelector(".mock-tt-row-hdr").addEventListener("click", () => {
-          row.classList.toggle("open");
-        });
-      });
-
-      // Auto-open first row
       setTimeout(() => {
         const first = body.querySelector(".mock-tt-row");
         if (first) first.classList.add("open");
@@ -1287,60 +1141,79 @@
 
     function positionTooltip(anchorEl) {
       const tt        = document.getElementById("mockTT");
-      const body      = document.querySelector(".mock-body");
-      const bodyRect  = body.getBoundingClientRect();
+      const frame     = document.querySelector(".demo-frame");
+      const frameRect = frame.getBoundingClientRect();
       const spanRect  = anchorEl.getBoundingClientRect();
-      const ttWidth   = 300;
-      const pad       = 12;
+      const ttWidth   = 290;
+      const pad       = 14;
 
-      let top  = spanRect.bottom - bodyRect.top + 8;
-      let left = spanRect.left   - bodyRect.left;
+      let top  = spanRect.bottom - frameRect.top + 8;
+      let left = spanRect.left   - frameRect.left;
 
-      // Clamp horizontally
-      if (left + ttWidth > bodyRect.width - pad) left = bodyRect.width - ttWidth - pad;
+      if (left + ttWidth > frameRect.width - pad) left = frameRect.width - ttWidth - pad;
       if (left < pad) left = pad;
-
-      // Flip above if not enough room below
-      const ttHeight = tt.offsetHeight || 260;
-      if (top + ttHeight > bodyRect.height - 16) top = (spanRect.top - bodyRect.top) - ttHeight - 8;
 
       tt.style.top  = top  + "px";
       tt.style.left = left + "px";
     }
 
-    function resetPanel() {
-      const tt = document.getElementById("mockTT");
-      tt.classList.remove("visible");
+    // Auto-cursor sequence (loops continuously)
+    const cursor = document.getElementById("demoCursor");
+
+    function moveCursorTo(el, cb) {
+      const frame = document.querySelector(".demo-frame");
+      const fRect = frame.getBoundingClientRect();
+      const r     = el.getBoundingClientRect();
+      cursor.style.top  = (r.top  - fRect.top  + r.height * 0.55) + "px";
+      cursor.style.left = (r.left - fRect.left + r.width  * 0.45) + "px";
+      setTimeout(cb, 950);
     }
 
-    document.querySelectorAll(".demo-flag").forEach(el => {
-      el.addEventListener("click", (e) => {
-        e.stopPropagation();
-        if (!inciteOn) return;
-        const idx = parseInt(el.dataset.flag);
-        document.querySelectorAll(".demo-flag").forEach(f => f.classList.remove("demo-flag-active"));
-        if (activeFlag === idx) { activeFlag = null; resetPanel(); return; }
-        activeFlag = idx;
+    function autoCursorStep(idx) {
+      const el = flags[idx];
+      cursor.classList.add("cursor-vis");
+      moveCursorTo(el, () => {
+        cursor.classList.add("cursor-clicking");
+        setTimeout(() => cursor.classList.remove("cursor-clicking"), 500);
+        flags.forEach(f => f.classList.remove("demo-flag-active"));
         el.classList.add("demo-flag-active");
         renderPanel(idx);
-        // Position before showing so offsetHeight is accurate on re-open
         const tt = document.getElementById("mockTT");
         tt.classList.remove("visible");
-        requestAnimationFrame(() => {
-          positionTooltip(el);
-          tt.classList.add("visible");
-        });
-      });
-    });
+        requestAnimationFrame(() => { positionTooltip(el); tt.classList.add("visible"); });
 
-    // Close tooltip on click outside
-    document.querySelector(".mock-body").addEventListener("click", (e) => {
-      if (!e.target.closest(".demo-flag") && !e.target.closest(".mock-tt")) {
-        document.querySelectorAll(".demo-flag").forEach(f => f.classList.remove("demo-flag-active"));
-        activeFlag = null;
-        resetPanel();
-      }
-    });
+        const next = (idx + 1) % flags.length;
+        setTimeout(() => {
+          tt.classList.remove("visible");
+          el.classList.remove("demo-flag-active");
+          if (next === 0) {
+            // End of loop — pause then restart the full intro sequence
+            cursor.classList.remove("cursor-vis");
+            setTimeout(restartSequence, 1500);
+          } else {
+            autoCursorStep(next);
+          }
+        }, 2800);
+      });
+    }
+
+    function scheduleAutoSequence() {
+      setTimeout(() => autoCursorStep(0), flags.length * 500 + 800);
+    }
+
+    function restartSequence() {
+      flags.forEach(f => { f.classList.remove("drawn"); f.classList.remove("demo-flag-active"); });
+      streamCursor.style.display = "inline-block";
+      setTimeout(() => {
+        streamCursor.style.display = "none";
+        scanningEl.classList.add("visible");
+      }, 1200);
+      setTimeout(() => {
+        scanningEl.classList.remove("visible");
+        flags.forEach((el, i) => setTimeout(() => el.classList.add("drawn"), i * 500));
+        scheduleAutoSequence();
+      }, 2100);
+    }
 
     // Scrollytelling
     const SCROLLY = [
