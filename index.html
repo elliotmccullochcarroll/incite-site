@@ -1089,17 +1089,6 @@
   </div>
 
   <script>
-    // Scroll fade-in
-    const fadeObserver = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("visible"); fadeObserver.unobserve(e.target); } });
-    }, { threshold: 0.1 });
-    document.querySelectorAll(".fade-up").forEach(el => fadeObserver.observe(el));
-
-    // Hero underline draw-in
-    setTimeout(() => {
-      document.querySelector(".hero h1 em").classList.add("drawn");
-    }, 900);
-
     const FLAGS = [
       {
         verdict: "Flag: high risk", verdictClass: "verdict-low",
@@ -1238,6 +1227,7 @@
   </script>
 
   <!-- How it works -->
+
   <section class="section fade-up" id="how-it-works">
     <p class="section-label">How it works</p>
     <h2>Uncertainty, made visible.</h2>
@@ -1356,6 +1346,19 @@
     <p>InCite — Early preview</p>
     <p>Works with Claude.ai · Chrome only</p>
   </footer>
+
+  <script>
+    // Scroll fade-in — runs after full DOM is parsed
+    const fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("visible"); fadeObserver.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll(".fade-up").forEach(el => fadeObserver.observe(el));
+
+    // Hero underline draw-in
+    setTimeout(() => {
+      document.querySelector(".hero h1 em").classList.add("drawn");
+    }, 900);
+  </script>
 
 </body>
 </html>
