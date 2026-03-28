@@ -118,6 +118,14 @@
     .hero h1 em {
       font-style: normal;
       color: var(--accent);
+      background-image: linear-gradient(var(--accent), var(--accent));
+      background-repeat: no-repeat;
+      background-position: 0 calc(100% + 3px);
+      background-size: 0% 3px;
+      transition: background-size 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .hero h1 em.drawn {
+      background-size: 100% 3px;
     }
     .hero-compat {
       font-size: 12px;
@@ -1049,6 +1057,11 @@
   </div>
 
   <script>
+    // Hero underline draw-in
+    setTimeout(() => {
+      document.querySelector(".hero h1 em").classList.add("drawn");
+    }, 400);
+
     const FLAGS = [
       {
         verdict: "Flag: high risk", verdictClass: "verdict-low",
