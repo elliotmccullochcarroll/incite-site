@@ -349,13 +349,13 @@
       margin-top: 1px;
     }
 
-    /* ── Demo mockup ── */
+    /* ── Demo ── */
     .demo-section {
-      background: #EDEAE5;
+      background: #E8E4DE;
       padding: 96px 24px;
     }
     .demo-inner {
-      max-width: 960px;
+      max-width: 1000px;
       margin: 0 auto;
     }
     .demo-inner .section-label { text-align: center; }
@@ -372,270 +372,212 @@
       color: var(--muted);
       text-align: center;
       max-width: 460px;
-      margin: 0 auto 56px;
+      margin: 0 auto 48px;
       line-height: 1.65;
     }
+
+    /* Browser chrome */
     .mock-browser {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
-      border: 1px solid rgba(0,0,0,0.07);
+      border-radius: 14px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.14), 0 1px 4px rgba(0,0,0,0.08);
+      border: 1px solid rgba(0,0,0,0.09);
+      overflow: hidden;
     }
     .mock-browser-bar {
-      background: #F2F0ED;
-      padding: 11px 16px;
+      background: #EDEBE8;
+      padding: 10px 14px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       border-bottom: 1px solid rgba(0,0,0,0.07);
     }
-    .mock-dots { display: flex; gap: 6px; }
-    .mock-dot {
-      width: 11px; height: 11px;
-      border-radius: 50%;
-    }
+    .mock-dots { display: flex; gap: 5px; }
+    .mock-dot { width: 10px; height: 10px; border-radius: 50%; }
     .mock-dot-r { background: #FF5F57; }
     .mock-dot-y { background: #FEBC2E; }
     .mock-dot-g { background: #28C840; }
     .mock-urlbar {
       flex: 1;
-      background: #E5E2DE;
-      border-radius: 6px;
-      padding: 5px 12px;
-      font-size: 11.5px;
-      color: #888;
+      background: #E0DDD9;
+      border-radius: 5px;
+      padding: 4px 10px;
+      font-size: 11px;
+      color: #999;
       font-family: "Inter", sans-serif;
     }
-    .mock-content {
-      background: #F5F4F0;
-      padding: 32px 40px 40px;
-      display: flex;
-      gap: 32px;
-      align-items: flex-start;
-      position: relative;
+
+    /* Two-panel layout */
+    .mock-body {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      min-height: 340px;
     }
-    .mock-sidebar {
-      width: 200px;
-      flex-shrink: 0;
+    .mock-left {
+      background: #F5F3EF;
+      padding: 28px 28px 28px 28px;
+      border-right: 1px solid rgba(0,0,0,0.07);
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      padding-top: 4px;
+      gap: 0;
     }
-    .mock-sidebar-item {
-      padding: 9px 12px;
-      border-radius: 8px;
-      font-size: 12px;
+    .mock-prompt {
+      font-size: 12.5px;
       color: #888;
       font-family: "Inter", sans-serif;
-      cursor: default;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(0,0,0,0.07);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    .mock-sidebar-item.active {
-      background: rgba(0,0,0,0.06);
-      color: #333;
-      font-weight: 500;
+    .mock-prompt-avatar {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #C8A882;
+      flex-shrink: 0;
     }
-    .mock-chat {
-      flex: 1;
-      min-width: 0;
-    }
-    .mock-message {
-      background: #fff;
-      border-radius: 12px;
-      padding: 18px 20px;
-      font-size: 14px;
-      line-height: 1.7;
+    .mock-response {
+      font-size: 13.5px;
+      line-height: 1.72;
       color: #2A2420;
       font-family: "Inter", sans-serif;
-      border: 1px solid rgba(0,0,0,0.06);
-      position: relative;
+      display: flex;
+      gap: 10px;
     }
     .mock-avatar {
-      width: 28px; height: 28px;
+      width: 24px; height: 24px;
       border-radius: 50%;
       background: linear-gradient(135deg, #C8956A, #A06840);
       display: flex; align-items: center; justify-content: center;
-      font-size: 12px;
-      color: #fff;
-      font-weight: 700;
-      flex-shrink: 0;
+      font-size: 10px; color: #fff; font-weight: 700;
+      flex-shrink: 0; margin-top: 2px;
       font-family: "Inter", sans-serif;
     }
-    .mock-msg-row {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-    }
-    /* Underline styles */
-    .u-low {
-      text-decoration: underline;
-      text-decoration-color: #D96860;
+
+    /* Underlines */
+    .u-low, .u-med, .u-info {
       text-decoration-thickness: 2px;
       text-underline-offset: 3px;
       cursor: pointer;
       border-radius: 2px;
-      transition: background 0.15s;
-      position: relative;
+      transition: background 0.12s;
     }
-    .u-low:hover { background: rgba(217,104,96,0.10); }
-    .u-med {
-      text-decoration: underline;
-      text-decoration-color: #C87840;
-      text-decoration-thickness: 2px;
-      text-underline-offset: 3px;
-      cursor: pointer;
-      border-radius: 2px;
-      transition: background 0.15s;
-    }
-    .u-med:hover { background: rgba(200,120,64,0.10); }
-    .u-info {
-      text-decoration: underline;
-      text-decoration-color: #8AAE50;
-      text-decoration-thickness: 2px;
-      text-underline-offset: 3px;
-      cursor: pointer;
-      border-radius: 2px;
-      transition: background 0.15s;
-    }
+    .u-low  { text-decoration: underline; text-decoration-color: #D96860; }
+    .u-med  { text-decoration: underline; text-decoration-color: #C87840; }
+    .u-info { text-decoration: underline; text-decoration-color: #8AAE50; }
+    .u-low:hover  { background: rgba(217,104,96,0.10); }
+    .u-med:hover  { background: rgba(200,120,64,0.10); }
     .u-info:hover { background: rgba(138,174,80,0.10); }
+    .demo-flag-active.u-low  { background: rgba(217,104,96,0.14); }
+    .demo-flag-active.u-med  { background: rgba(200,120,64,0.14); }
+    .demo-flag-active.u-info { background: rgba(138,174,80,0.14); }
 
-    .mock-chat { position: relative; }
-    .demo-flag-active.u-low  { background: rgba(217,104,96,0.12); border-radius: 2px; }
-    .demo-flag-active.u-med  { background: rgba(200,120,64,0.12); border-radius: 2px; }
-    .demo-flag-active.u-info { background: rgba(138,174,80,0.12); border-radius: 2px; }
-
-    .mock-tt-tabs { display: flex; gap: 2px; }
-    .mock-tt-tab {
-      font-size: 10px; font-weight: 600;
-      padding: 3px 8px; border-radius: 5px;
-      color: rgba(255,255,255,0.35);
-      cursor: default;
-    }
-    .mock-tt-tab.active {
-      background: rgba(255,255,255,0.10);
-      color: rgba(255,255,255,0.80);
-    }
-
-    /* Tooltip */
-    .mock-tooltip {
-      position: relative;
-      margin-top: 12px;
-      margin-left: auto;
-      width: 300px;
-      opacity: 0;
-      transform: translateY(6px);
-      transition: opacity 0.18s ease, transform 0.18s ease;
+    /* Right panel — InCite */
+    .mock-right {
       background: #201410;
-      border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.16);
+      display: flex;
+      flex-direction: column;
       font-family: "Inter", sans-serif;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.08);
-      z-index: 10;
     }
-    .mock-tt-header {
+    .mock-right-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 14px;
+      padding: 12px 14px 10px;
       background: #2A1C14;
       border-bottom: 1px solid rgba(255,255,255,0.07);
-    }
-    .mock-tt-logo {
-      width: 16px; height: 16px;
-      border-radius: 4px;
       flex-shrink: 0;
     }
-    .mock-tt-badge {
-      font-size: 10px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 5px;
-      background: rgba(217,104,96,0.18);
-      color: #D96860;
+    .mock-right-logo {
+      display: flex; align-items: center; gap: 7px;
     }
-    .mock-tt-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+    .mock-right-logo img { width: 16px; height: 16px; border-radius: 4px; }
+    .mock-right-logo span {
+      font-size: 11px; font-weight: 700;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.2px;
+    }
+    .mock-badge {
+      font-size: 10px; font-weight: 700;
+      padding: 3px 8px; border-radius: 5px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .mock-right-body {
+      flex: 1;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow: hidden;
+    }
+    .mock-empty {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+    .mock-empty-icon { font-size: 22px; opacity: 0.3; }
+    .mock-empty-text { font-size: 11px; color: rgba(255,255,255,0.25); line-height: 1.5; }
     .mock-signal-card {
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 8px;
-      padding: 10px 12px;
+      padding: 10px 11px;
+      animation: fadeUp 0.2s ease forwards;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
     .mock-signal-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 6px;
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 5px;
     }
-    .mock-signal-name {
-      font-size: 11px;
-      font-weight: 650;
-    }
-    .mock-signal-pct {
-      font-size: 10px;
-      font-weight: 600;
-    }
+    .mock-signal-name { font-size: 11px; font-weight: 650; }
+    .mock-signal-pct  { font-size: 10px; font-weight: 600; }
     .mock-bar-track {
-      height: 3px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 2px;
-      overflow: hidden;
-      margin-bottom: 6px;
+      height: 3px; background: rgba(255,255,255,0.08);
+      border-radius: 2px; overflow: hidden; margin-bottom: 6px;
     }
-    .mock-bar-fill {
-      height: 100%;
-      border-radius: 2px;
-    }
-    .mock-signal-desc {
-      font-size: 11px;
-      color: rgba(255,255,255,0.45);
-      line-height: 1.45;
-    }
+    .mock-bar-fill { height: 100%; border-radius: 2px; width: 0; }
+    .mock-signal-desc { font-size: 11px; color: rgba(255,255,255,0.40); line-height: 1.45; }
     .mock-verify-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      margin-top: 6px;
-      font-size: 10px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.45);
+      display: inline-flex; align-items: center;
+      margin-top: 6px; font-size: 10px; font-weight: 600;
+      color: rgba(255,255,255,0.40);
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 5px;
-      padding: 3px 8px;
-      cursor: default;
+      border-radius: 5px; padding: 3px 8px; cursor: default;
     }
-    .mock-tt-footer {
-      padding: 10px 14px;
+    .mock-right-footer {
+      padding: 10px 12px;
       border-top: 1px solid rgba(255,255,255,0.07);
+      flex-shrink: 0;
     }
     .mock-improve-btn {
       width: 100%;
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 7px;
-      padding: 8px;
-      font-size: 11px;
-      font-weight: 500;
-      color: rgba(255,255,255,0.5);
-      text-align: center;
-      cursor: default;
+      border-radius: 7px; padding: 7px;
+      font-size: 11px; font-weight: 500;
+      color: rgba(255,255,255,0.4);
+      text-align: center; cursor: default;
       font-family: "Inter", sans-serif;
     }
-    .mock-tooltip.tt-visible { opacity: 1; transform: translateY(0); }
-
-    .mock-connector {
-      position: absolute;
-      top: 118px;
-      right: 278px;
-      width: 2px;
-      height: 32px;
-      background: linear-gradient(to bottom, rgba(217,104,96,0.6), transparent);
+    .mock-hint {
+      font-size: 11px;
+      color: rgba(255,255,255,0.22);
+      text-align: center;
+      padding: 0 12px 10px;
+      flex-shrink: 0;
     }
-    @media (max-width: 700px) {
-      .mock-sidebar { display: none; }
-      .mock-tooltip { right: -8px; width: 260px; }
-      .mock-content { padding: 20px; }
+    @media (max-width: 680px) {
+      .mock-body { grid-template-columns: 1fr; }
+      .mock-right { border-top: 1px solid rgba(0,0,0,0.08); min-height: 260px; }
     }
 
     /* ── Divider ── */
@@ -705,40 +647,47 @@
           </div>
           <div class="mock-urlbar">claude.ai</div>
         </div>
-        <div class="mock-content">
-          <div class="mock-sidebar">
-            <div class="mock-sidebar-item active">Drug interaction check</div>
-            <div class="mock-sidebar-item">SEC filing summary</div>
-            <div class="mock-sidebar-item">Contract review</div>
-          </div>
-          <div class="mock-chat">
-            <div class="mock-msg-row">
+        <div class="mock-body">
+
+          <!-- Left: Claude response -->
+          <div class="mock-left">
+            <div class="mock-prompt">
+              <div class="mock-prompt-avatar"></div>
+              What should I know about semaglutide for type 2 diabetes?
+            </div>
+            <div class="mock-response">
               <div class="mock-avatar">C</div>
-              <div class="mock-message">
+              <div>
                 <span class="u-low demo-flag" data-flag="0">According to a 2023 study by Williams and Park published in <em>Cell</em>, the CRISPR-Cas9 system achieved 94% efficiency in correcting the sickle cell mutation across 47 patients.</span>
-                &nbsp;This represents a significant advance over prior gene-editing approaches.
+                This represents a significant advance over prior gene-editing approaches.
                 <span class="u-med demo-flag" data-flag="1"> Metformin is typically prescribed at 500mg twice daily for type 2 diabetes, with doses titrated up to 2000mg per day based on tolerability.</span>
-                &nbsp;Always consult your physician before adjusting dosage.
+                Always consult your physician before adjusting dosage.
                 <span class="u-info demo-flag" data-flag="2"> As of early 2024, this remains one of the most widely used first-line treatments globally.</span>
               </div>
             </div>
-            <div class="mock-tooltip" id="mockTooltip" style="display:none">
-              <div class="mock-tt-header">
-                <div style="display:flex;align-items:center;gap:8px">
-                  <img src="logo.svg" class="mock-tt-logo" alt="">
-                  <span class="mock-tt-tabs">
-                    <span class="mock-tt-tab active">Simple</span>
-                    <span class="mock-tt-tab">Advanced</span>
-                  </span>
-                </div>
-                <span class="mock-tt-badge" id="mockBadge"></span>
+          </div>
+
+          <!-- Right: InCite panel -->
+          <div class="mock-right">
+            <div class="mock-right-header">
+              <div class="mock-right-logo">
+                <img src="logo.svg" alt="">
+                <span>InCite</span>
               </div>
-              <div class="mock-tt-body" id="mockBody"></div>
-              <div class="mock-tt-footer">
-                <div class="mock-improve-btn">Suggest improvement</div>
+              <span class="mock-badge" id="mockBadge"></span>
+            </div>
+            <div class="mock-right-body" id="mockBody">
+              <div class="mock-empty">
+                <div class="mock-empty-icon">〰</div>
+                <div class="mock-empty-text">Click an underlined sentence<br>to see its signal breakdown.</div>
               </div>
             </div>
+            <div class="mock-hint" id="mockHint">3 sentences flagged in this response</div>
+            <div class="mock-right-footer">
+              <div class="mock-improve-btn">Suggest improvement</div>
+            </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -761,7 +710,7 @@
         badgeColor: "#C87840",
         badgeBg: "rgba(200,120,64,0.18)",
         signals: [
-          { name: "Medical", color: "#4E90B8", pct: 82, desc: "Specific drug dosage and titration protocol — always verify with a physician." },
+          { name: "Medical", color: "#4E90B8", pct: 82, desc: "Specific drug dosage and titration protocol — verify with a physician." },
         ]
       },
       {
@@ -774,59 +723,59 @@
       }
     ];
 
-    function renderTooltip(idx) {
-      const f = FLAGS[idx];
+    let activeFlag = null;
+
+    function renderPanel(idx) {
+      const f     = FLAGS[idx];
       const badge = document.getElementById("mockBadge");
       const body  = document.getElementById("mockBody");
-      badge.textContent = f.badge;
-      badge.style.color = f.badgeColor;
-      badge.style.background = f.badgeBg;
-      body.innerHTML = f.signals.map(s => `
-        <div class="mock-signal-card">
+      const hint  = document.getElementById("mockHint");
+
+      badge.textContent       = f.badge;
+      badge.style.color       = f.badgeColor;
+      badge.style.background  = f.badgeBg;
+
+      body.innerHTML = f.signals.map((s, i) => `
+        <div class="mock-signal-card" style="animation-delay:${i * 0.05}s">
           <div class="mock-signal-top">
             <span class="mock-signal-name" style="color:${s.color}">${s.name}</span>
             <span class="mock-signal-pct" style="color:${s.color}">${s.pct}%</span>
           </div>
-          <div class="mock-bar-track"><div class="mock-bar-fill" style="width:0%;background:${s.color}" data-w="${s.pct}"></div></div>
+          <div class="mock-bar-track"><div class="mock-bar-fill" style="background:${s.color}" data-w="${s.pct}"></div></div>
           <div class="mock-signal-desc">${s.desc}</div>
           <div class="mock-verify-btn">Verify ↗</div>
         </div>`).join("");
-      // Animate bars
+
+      hint.style.display = "none";
+
       requestAnimationFrame(() => {
         body.querySelectorAll(".mock-bar-fill").forEach(el => {
-          el.style.transition = "width 0.4s ease";
+          el.style.transition = "width 0.45s ease";
           el.style.width = el.dataset.w + "%";
         });
       });
     }
 
-    let activeFlag = null;
+    function resetPanel() {
+      const badge = document.getElementById("mockBadge");
+      const body  = document.getElementById("mockBody");
+      const hint  = document.getElementById("mockHint");
+      badge.textContent = "";
+      badge.style.background = "transparent";
+      body.innerHTML = `<div class="mock-empty"><div class="mock-empty-icon">〰</div><div class="mock-empty-text">Click an underlined sentence<br>to see its signal breakdown.</div></div>`;
+      hint.style.display = "";
+    }
+
     document.querySelectorAll(".demo-flag").forEach(el => {
-      el.style.cursor = "pointer";
       el.addEventListener("click", (e) => {
         e.stopPropagation();
         const idx = parseInt(el.dataset.flag);
-        const tt  = document.getElementById("mockTooltip");
         document.querySelectorAll(".demo-flag").forEach(f => f.classList.remove("demo-flag-active"));
-        if (activeFlag === idx) {
-          tt.style.display = "none";
-          tt.classList.remove("tt-visible");
-          activeFlag = null;
-          return;
-        }
+        if (activeFlag === idx) { activeFlag = null; resetPanel(); return; }
         activeFlag = idx;
         el.classList.add("demo-flag-active");
-        renderTooltip(idx);
-        tt.style.display = "block";
-        requestAnimationFrame(() => tt.classList.add("tt-visible"));
+        renderPanel(idx);
       });
-    });
-
-    document.addEventListener("click", () => {
-      const tt = document.getElementById("mockTooltip");
-      if (tt) { tt.style.display = "none"; tt.classList.remove("tt-visible"); }
-      document.querySelectorAll(".demo-flag").forEach(f => f.classList.remove("demo-flag-active"));
-      activeFlag = null;
     });
   </script>
 
