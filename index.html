@@ -59,9 +59,9 @@
     }
     .nav-logo span { color: var(--accent); }
     .nav-logo img {
-      width: 26px;
-      height: 26px;
-      border-radius: 6px;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
       flex-shrink: 0;
     }
     .nav-right { display: flex; align-items: center; gap: 32px; }
@@ -91,14 +91,6 @@
       margin: 0 auto;
       padding: 110px 24px 96px;
       text-align: center;
-    }
-    .hero-logo {
-      width: 64px;
-      height: 64px;
-      border-radius: 16px;
-      margin: 0 auto 28px;
-      display: block;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.10);
     }
     .hero-badge {
       display: inline-flex;
@@ -381,7 +373,7 @@
 <body>
 
   <nav>
-    <a class="nav-logo" href="#"><img src="logo.svg" alt="InCite logo">In<span>Cite</span></a>
+    <a class="nav-logo" href="#"><img src="logo.svg" alt="InCite logo"></a>
     <div class="nav-right">
       <a class="nav-link" href="#how-it-works">How it works</a>
       <a class="nav-cta" href="#install">Install</a>
@@ -390,8 +382,6 @@
 
   <!-- Hero -->
   <section class="hero">
-    <img src="logo.svg" alt="InCite" class="hero-logo">
-    <div class="hero-badge">✦ &nbsp;Early Preview</div>
     <h1>Use AI with confidence.<br><em>Not blind faith.</em></h1>
     <p class="hero-sub">
       InCite runs alongside Claude, flagging uncertainty in real time — citations, medical claims, legal statements, and more — before you copy a single word.
