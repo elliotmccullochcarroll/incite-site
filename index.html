@@ -628,7 +628,7 @@
       background-repeat: no-repeat;
       background-position: 0 calc(100% + 1px);
       background-size: 0% 2px;
-      transition: background-size 0.55s ease, background-color 0.12s;
+      transition: background-size 0.4s ease, background-color 0.12s;
       padding-bottom: 1px;
     }
     .u-low  { background-image: linear-gradient(#D96860, #D96860); }
@@ -1094,7 +1094,7 @@
       // 3. After another 900ms, hide scanning and draw underlines, then start auto-cursor
       setTimeout(() => {
         scanningEl.classList.remove("visible");
-        flags.forEach((el, i) => setTimeout(() => el.classList.add("drawn"), i * 500));
+        flags.forEach((el, i) => setTimeout(() => el.classList.add("drawn"), i * 375));
       }, 2100);
     }
 
