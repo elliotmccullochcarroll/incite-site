@@ -342,6 +342,274 @@
       margin-top: 1px;
     }
 
+    /* ── Demo mockup ── */
+    .demo-section {
+      background: #EDEAE5;
+      padding: 96px 24px;
+    }
+    .demo-inner {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .demo-inner .section-label { text-align: center; }
+    .demo-inner h2 {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 700;
+      letter-spacing: -1px;
+      line-height: 1.12;
+      text-align: center;
+      margin-bottom: 14px;
+    }
+    .demo-inner .section-sub {
+      font-size: 16px;
+      color: var(--muted);
+      text-align: center;
+      max-width: 460px;
+      margin: 0 auto 56px;
+      line-height: 1.65;
+    }
+    .mock-browser {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.07);
+    }
+    .mock-browser-bar {
+      background: #F2F0ED;
+      padding: 11px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(0,0,0,0.07);
+    }
+    .mock-dots { display: flex; gap: 6px; }
+    .mock-dot {
+      width: 11px; height: 11px;
+      border-radius: 50%;
+    }
+    .mock-dot-r { background: #FF5F57; }
+    .mock-dot-y { background: #FEBC2E; }
+    .mock-dot-g { background: #28C840; }
+    .mock-urlbar {
+      flex: 1;
+      background: #E5E2DE;
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 11.5px;
+      color: #888;
+      font-family: "Inter", sans-serif;
+    }
+    .mock-content {
+      background: #F5F4F0;
+      padding: 32px 40px 40px;
+      display: flex;
+      gap: 32px;
+      align-items: flex-start;
+      position: relative;
+    }
+    .mock-sidebar {
+      width: 200px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-top: 4px;
+    }
+    .mock-sidebar-item {
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #888;
+      font-family: "Inter", sans-serif;
+      cursor: default;
+    }
+    .mock-sidebar-item.active {
+      background: rgba(0,0,0,0.06);
+      color: #333;
+      font-weight: 500;
+    }
+    .mock-chat {
+      flex: 1;
+      min-width: 0;
+    }
+    .mock-message {
+      background: #fff;
+      border-radius: 12px;
+      padding: 18px 20px;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #2A2420;
+      font-family: "Inter", sans-serif;
+      border: 1px solid rgba(0,0,0,0.06);
+      position: relative;
+    }
+    .mock-avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #C8956A, #A06840);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      color: #fff;
+      font-weight: 700;
+      flex-shrink: 0;
+      font-family: "Inter", sans-serif;
+    }
+    .mock-msg-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    /* Underline styles */
+    .u-low {
+      text-decoration: underline;
+      text-decoration-color: #D96860;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background 0.15s;
+      position: relative;
+    }
+    .u-low:hover { background: rgba(217,104,96,0.10); }
+    .u-med {
+      text-decoration: underline;
+      text-decoration-color: #C87840;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background 0.15s;
+    }
+    .u-med:hover { background: rgba(200,120,64,0.10); }
+    .u-info {
+      text-decoration: underline;
+      text-decoration-color: #8AAE50;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background 0.15s;
+    }
+    .u-info:hover { background: rgba(138,174,80,0.10); }
+
+    /* Tooltip */
+    .mock-tooltip {
+      position: absolute;
+      top: 70px;
+      right: -20px;
+      width: 300px;
+      background: #201410;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.16);
+      font-family: "Inter", sans-serif;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      z-index: 10;
+    }
+    .mock-tt-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: #2A1C14;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .mock-tt-logo {
+      width: 16px; height: 16px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .mock-tt-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 5px;
+      background: rgba(217,104,96,0.18);
+      color: #D96860;
+    }
+    .mock-tt-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+    .mock-signal-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .mock-signal-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .mock-signal-name {
+      font-size: 11px;
+      font-weight: 650;
+    }
+    .mock-signal-pct {
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .mock-bar-track {
+      height: 3px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+    .mock-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+    }
+    .mock-signal-desc {
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.45;
+    }
+    .mock-verify-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 6px;
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.45);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 5px;
+      padding: 3px 8px;
+      cursor: default;
+    }
+    .mock-tt-footer {
+      padding: 10px 14px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .mock-improve-btn {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 7px;
+      padding: 8px;
+      font-size: 11px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      cursor: default;
+      font-family: "Inter", sans-serif;
+    }
+    .mock-connector {
+      position: absolute;
+      top: 118px;
+      right: 278px;
+      width: 2px;
+      height: 32px;
+      background: linear-gradient(to bottom, rgba(217,104,96,0.6), transparent);
+    }
+    @media (max-width: 700px) {
+      .mock-sidebar { display: none; }
+      .mock-tooltip { right: -8px; width: 260px; }
+      .mock-content { padding: 20px; }
+    }
+
     /* ── Divider ── */
     .divider {
       border: none;
@@ -391,6 +659,85 @@
       <a class="btn-secondary" href="#how-it-works">See how it works</a>
     </div>
   </section>
+
+  <!-- Demo -->
+  <div class="demo-section">
+    <div class="demo-inner">
+      <p class="section-label">Live preview</p>
+      <h2>See it in action.</h2>
+      <p class="section-sub">InCite underlines flagged sentences directly in Claude's UI. Click any underline to see the full signal breakdown.</p>
+
+      <div class="mock-browser">
+        <div class="mock-browser-bar">
+          <div class="mock-dots">
+            <div class="mock-dot mock-dot-r"></div>
+            <div class="mock-dot mock-dot-y"></div>
+            <div class="mock-dot mock-dot-g"></div>
+          </div>
+          <div class="mock-urlbar">claude.ai</div>
+        </div>
+        <div class="mock-content">
+          <div class="mock-sidebar">
+            <div class="mock-sidebar-item active">Drug interaction check</div>
+            <div class="mock-sidebar-item">SEC filing summary</div>
+            <div class="mock-sidebar-item">Contract review</div>
+          </div>
+          <div class="mock-chat">
+            <div class="mock-msg-row">
+              <div class="mock-avatar">C</div>
+              <div class="mock-message">
+                <span class="u-low">According to a 2023 study by Williams and Park published in <em>Cell</em>, the CRISPR-Cas9 system achieved 94% efficiency in correcting the sickle cell mutation across 47 patients.</span>
+                &nbsp;This represents a significant advance over prior gene-editing approaches.
+                <span class="u-med"> Metformin is typically prescribed at 500mg twice daily for type 2 diabetes, with doses titrated up to 2000mg per day based on tolerability.</span>
+                &nbsp;Always consult your physician before adjusting dosage.
+                <span class="u-info"> As of early 2024, this remains one of the most widely used first-line treatments globally.</span>
+
+                <!-- Tooltip -->
+                <div class="mock-tooltip">
+                  <div class="mock-tt-header">
+                    <img src="logo.svg" class="mock-tt-logo" alt="">
+                    <span class="mock-tt-badge">Flag: high risk</span>
+                  </div>
+                  <div class="mock-tt-body">
+                    <div class="mock-signal-card">
+                      <div class="mock-signal-top">
+                        <span class="mock-signal-name" style="color:#9068C8">Citations</span>
+                        <span class="mock-signal-pct" style="color:#9068C8">88%</span>
+                      </div>
+                      <div class="mock-bar-track"><div class="mock-bar-fill" style="width:88%;background:#9068C8"></div></div>
+                      <div class="mock-signal-desc">Author + journal reference that may be fabricated or misremembered.</div>
+                      <div class="mock-verify-btn">Verify ↗</div>
+                    </div>
+                    <div class="mock-signal-card">
+                      <div class="mock-signal-top">
+                        <span class="mock-signal-name" style="color:#4E90B8">Medical</span>
+                        <span class="mock-signal-pct" style="color:#4E90B8">74%</span>
+                      </div>
+                      <div class="mock-bar-track"><div class="mock-bar-fill" style="width:74%;background:#4E90B8"></div></div>
+                      <div class="mock-signal-desc">Specific clinical efficacy stat with patient cohort size.</div>
+                      <div class="mock-verify-btn">Verify ↗</div>
+                    </div>
+                    <div class="mock-signal-card">
+                      <div class="mock-signal-top">
+                        <span class="mock-signal-name" style="color:#6070C0">Entity stats</span>
+                        <span class="mock-signal-pct" style="color:#6070C0">61%</span>
+                      </div>
+                      <div class="mock-bar-track"><div class="mock-bar-fill" style="width:61%;background:#6070C0"></div></div>
+                      <div class="mock-signal-desc">Precise figure attributed to a named study or organisation.</div>
+                      <div class="mock-verify-btn">Verify ↗</div>
+                    </div>
+                  </div>
+                  <div class="mock-tt-footer">
+                    <div class="mock-improve-btn">Suggest improvement</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <hr class="divider">
 
