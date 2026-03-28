@@ -830,6 +830,134 @@
       .mock-tt { width: calc(100% - 32px); }
     }
 
+    /* ── Scrollytelling ── */
+    .scrolly-section {
+      background: var(--bg);
+      padding: 96px 24px;
+    }
+    .scrolly-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 80px;
+      align-items: start;
+    }
+    .scrolly-hdr { margin-bottom: 48px; }
+    .scrolly-hdr .section-label { text-align: left; }
+    .scrolly-hdr h2 {
+      font-size: clamp(24px, 3.5vw, 36px);
+      font-weight: 700;
+      letter-spacing: -0.8px;
+      line-height: 1.12;
+      margin-bottom: 10px;
+    }
+    .scrolly-hdr p {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+    .scrolly-step {
+      padding: 36px 0;
+      border-bottom: 1px solid var(--border);
+      opacity: 0.3;
+      transition: opacity 0.35s;
+    }
+    .scrolly-step:last-child { border-bottom: none; }
+    .scrolly-step.s-active { opacity: 1; }
+    .scrolly-step-tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .scrolly-step h3 {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .scrolly-step p {
+      font-size: 14.5px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+    .scrolly-sticky {
+      position: sticky;
+      top: 100px;
+    }
+    /* Mini sentence preview */
+    .scrolly-preview {
+      background: #F5F3EF;
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 12.5px;
+      line-height: 1.65;
+      color: #2A2420;
+      font-family: "Inter", sans-serif;
+      margin-bottom: 10px;
+      border: 1px solid rgba(0,0,0,0.07);
+    }
+    .scrolly-hl {
+      background-repeat: no-repeat;
+      background-position: 0 calc(100% + 1px);
+      background-size: 100% 2px;
+      padding-bottom: 1px;
+      font-weight: 500;
+    }
+    .scrolly-hl-r { background-image: linear-gradient(#D96860, #D96860); }
+    .scrolly-hl-o { background-image: linear-gradient(#C87840, #C87840); }
+    .scrolly-hl-g { background-image: linear-gradient(#8AAE50, #8AAE50); }
+    /* Mini tooltip for scrolly */
+    .scrolly-tt {
+      background: #201410;
+      border-radius: 12px;
+      border: 1px solid rgba(212,180,140,0.15);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.40);
+      font-family: "Inter", sans-serif;
+      font-size: 12px;
+      color: #F4EFE8;
+      overflow: hidden;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .scrolly-tt-hdr {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 13px 8px;
+      background: #2A1C14;
+      border-bottom: 1px solid rgba(212,180,140,0.10);
+    }
+    .scrolly-tt-hdr img { width: 14px; height: 14px; border-radius: 3px; }
+    .scrolly-tt-verdict {
+      margin-left: auto;
+      font-size: 10px; font-weight: 700;
+      padding: 2px 7px; border-radius: 4px;
+    }
+    .scrolly-tt-body { padding: 10px 13px 12px; }
+    .scrolly-tt-label {
+      font-size: 9.5px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      color: rgba(255,255,255,0.30);
+      margin-bottom: 5px;
+    }
+    .scrolly-tt-text { font-size: 11.5px; color: #C0B8AE; line-height: 1.5; }
+    .scrolly-tt-signal {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: 10px; padding: 7px 10px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 6px;
+      border-left: 3px solid transparent;
+    }
+    .scrolly-tt-signal-name { font-size: 11.5px; font-weight: 600; }
+    .scrolly-tt-signal-desc { font-size: 10.5px; color: #9A8E82; margin-top: 2px; line-height: 1.4; }
+
+    @media (max-width: 720px) {
+      .scrolly-inner { grid-template-columns: 1fr; }
+      .scrolly-sticky { display: none; }
+    }
+
     /* ── Divider ── */
     .divider {
       border: none;
@@ -1213,9 +1341,115 @@
         resetPanel();
       }
     });
+
+    // Scrollytelling
+    const SCROLLY = [
+      {
+        sentence: `According to a <span class="scrolly-hl scrolly-hl-r">2023 study by Williams and Park published in <em>Cell</em></span>, the CRISPR-Cas9 system achieved 94% efficiency across 47 patients.`,
+        verdict: "Flag: high risk", vClass: "verdict-low",
+        why: "Named author, journal, and specific stat — all high-risk for fabrication.",
+        signalName: "Citations", signalColor: "#9068C8",
+        signalDesc: "AI models frequently invent plausible-sounding academic citations."
+      },
+      {
+        sentence: `<span class="scrolly-hl scrolly-hl-o">Metformin is typically prescribed at 500mg twice daily</span>, with doses titrated up to 2000mg per day based on tolerability.`,
+        verdict: "Flag: moderate", vClass: "verdict-medium",
+        why: "Specific drug dosage and titration protocol — verify before acting.",
+        signalName: "Medical", signalColor: "#4E90B8",
+        signalDesc: "Precision medical claims require verification with a clinician."
+      },
+      {
+        sentence: `<span class="scrolly-hl scrolly-hl-g">As of early 2024, this remains one of the most widely used first-line treatments globally.</span>`,
+        verdict: "Flag: minor", vClass: "verdict-info",
+        why: "Time-anchored claim that may have changed since the model's training cutoff.",
+        signalName: "Temporal", signalColor: "#8AAE50",
+        signalDesc: "Time-sensitive statement — the model's knowledge may be out of date."
+      }
+    ];
+
+    function renderScrollyStep(idx) {
+      const d = SCROLLY[idx];
+      document.getElementById("scrollyPreview").innerHTML        = d.sentence;
+      document.getElementById("scrollyVerdict").textContent      = d.verdict;
+      document.getElementById("scrollyVerdict").className        = "scrolly-tt-verdict " + d.vClass;
+      document.getElementById("scrollyWhy").textContent          = d.why;
+      document.getElementById("scrollySignalName").textContent   = d.signalName;
+      document.getElementById("scrollySignalName").style.color   = d.signalColor;
+      document.getElementById("scrollySignal").style.borderLeftColor = d.signalColor;
+      document.getElementById("scrollySignalDesc").textContent   = d.signalDesc;
+    }
+    renderScrollyStep(0);
+
+    const scrollySteps = document.querySelectorAll(".scrolly-step");
+    const stepObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          scrollySteps.forEach(s => s.classList.remove("s-active"));
+          entry.target.classList.add("s-active");
+          renderScrollyStep(parseInt(entry.target.dataset.step));
+        }
+      });
+    }, { threshold: 0.55 });
+    scrollySteps.forEach(s => stepObserver.observe(s));
   </script>
 
   <hr class="divider">
+
+  <!-- Scrollytelling -->
+  <div class="scrolly-section">
+    <div class="scrolly-inner">
+
+      <!-- Left: scrollable steps -->
+      <div class="scrolly-left">
+        <div class="scrolly-hdr">
+          <p class="section-label">Signal types</p>
+          <h2>Every flag. Explained.</h2>
+          <p>InCite watches for nine patterns where AI models are most likely to mislead. Here are three of the most common.</p>
+        </div>
+
+        <div class="scrolly-step s-active" data-step="0">
+          <div class="scrolly-step-tag">Citations</div>
+          <h3>Authors and studies that may not exist.</h3>
+          <p>AI models can fabricate plausible-sounding academic citations — correct journal format, realistic author names, real-looking DOIs — that point to papers that were never written. InCite flags any sentence with a named study, author, or journal.</p>
+        </div>
+
+        <div class="scrolly-step" data-step="1">
+          <div class="scrolly-step-tag">Medical</div>
+          <h3>Dosages you shouldn't copy without checking.</h3>
+          <p>Specific drug names, dosages, titration schedules, and clinical protocols are high-stakes claims. Even when a model gets the general answer right, the precise figure may be wrong, outdated, or inappropriate for a specific patient profile.</p>
+        </div>
+
+        <div class="scrolly-step" data-step="2">
+          <div class="scrolly-step-tag">Temporal</div>
+          <h3>Facts that may have changed since training.</h3>
+          <p>Time-anchored claims like "as of 2024" or "currently the leading…" can become silently wrong as the world moves on. The model's confidence doesn't degrade as its knowledge ages — InCite's temporal signal surfaces these for review.</p>
+        </div>
+      </div>
+
+      <!-- Right: sticky tooltip preview -->
+      <div class="scrolly-sticky">
+        <div class="scrolly-preview" id="scrollyPreview"></div>
+        <div class="scrolly-tt" id="scrollyTT">
+          <div class="scrolly-tt-hdr">
+            <img src="logo.svg" alt="">
+            <span style="font-size:10.5px;font-weight:700;color:rgba(255,255,255,0.50)">InCite</span>
+            <span class="scrolly-tt-verdict verdict-low" id="scrollyVerdict"></span>
+          </div>
+          <div class="scrolly-tt-body">
+            <div class="scrolly-tt-label">Why flagged</div>
+            <div class="scrolly-tt-text" id="scrollyWhy"></div>
+            <div class="scrolly-tt-signal" id="scrollySignal">
+              <div>
+                <div class="scrolly-tt-signal-name" id="scrollySignalName"></div>
+                <div class="scrolly-tt-signal-desc" id="scrollySignalDesc"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 
   <!-- How it works -->
   <section class="section" id="how-it-works">
