@@ -373,9 +373,56 @@
       color: var(--muted);
       text-align: center;
       max-width: 460px;
-      margin: 0 auto 48px;
+      margin: 0 auto 32px;
       line-height: 1.65;
     }
+
+    /* Before/After toggle */
+    .demo-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .demo-toggle-label {
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--faint);
+      transition: color 0.2s;
+      user-select: none;
+    }
+    .demo-toggle-label.active { color: var(--text); }
+    .demo-toggle-btn {
+      width: 42px; height: 24px;
+      border-radius: 100px;
+      background: var(--accent);
+      border: none;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .demo-toggle-btn.off { background: #C4BFBA; }
+    .demo-toggle-btn::after {
+      content: '';
+      position: absolute;
+      top: 3px; left: 21px;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      transition: left 0.2s;
+    }
+    .demo-toggle-btn.off::after { left: 3px; }
+    /* When InCite is off, hide underlines and tooltip */
+    .incite-off .demo-flag {
+      text-decoration: none !important;
+      background-size: 0% 2px !important;
+      cursor: default;
+    }
+    .incite-off .demo-flag:hover { background-color: transparent !important; }
+    .incite-off #mockTT { opacity: 0 !important; pointer-events: none !important; }
 
     /* Browser chrome */
     .mock-browser {
@@ -789,6 +836,12 @@
       <h2>See it in action.</h2>
       <p class="section-sub">Click any underlined sentence to see InCite's signal breakdown.</p>
 
+      <div class="demo-toggle-row">
+        <span class="demo-toggle-label" id="toggleLabelOff">Without InCite</span>
+        <button class="demo-toggle-btn" id="demoToggle" aria-label="Toggle InCite"></button>
+        <span class="demo-toggle-label active" id="toggleLabelOn">With InCite</span>
+      </div>
+
       <div class="mock-browser">
         <div class="mock-tabs">
           <div class="mock-tab-active">
@@ -892,6 +945,25 @@
     ];
 
     let activeFlag = null;
+
+    // Before/After toggle
+    const demoToggle   = document.getElementById("demoToggle");
+    const mockBodyWrap = document.querySelector(".mock-body");
+    const labelOff     = document.getElementById("toggleLabelOff");
+    const labelOn      = document.getElementById("toggleLabelOn");
+    let inciteOn = true;
+
+    demoToggle.addEventListener("click", () => {
+      inciteOn = !inciteOn;
+      demoToggle.classList.toggle("off", !inciteOn);
+      mockBodyWrap.classList.toggle("incite-off", !inciteOn);
+      labelOff.classList.toggle("active", !inciteOn);
+      labelOn.classList.toggle("active",  inciteOn);
+      if (!inciteOn) {
+        document.querySelectorAll(".demo-flag").forEach(f => f.classList.remove("demo-flag-active"));
+        activeFlag = null;
+      }
+    });
 
     function renderPanel(idx) {
       const f       = FLAGS[idx];
