@@ -971,11 +971,11 @@
             <div class="mock-response">
               <div class="mock-avatar">C</div>
               <div>
-                <span class="u-low demo-flag" data-flag="0">According to a 2023 study by Williams and Park published in <em>Cell</em>, the CRISPR-Cas9 system achieved 94% efficiency in correcting the sickle cell mutation across 47 patients.</span>
-                This represents a significant advance over prior gene-editing approaches.
-                <span class="u-med demo-flag" data-flag="1"> Metformin is typically prescribed at 500mg twice daily for type 2 diabetes, with doses titrated up to 2000mg per day based on tolerability.</span>
-                Always consult your physician before adjusting dosage.
-                <span class="u-info demo-flag" data-flag="2"> As of early 2024, this remains one of the most widely used first-line treatments globally.</span>
+                <span class="u-low demo-flag" data-flag="0">A 2021 trial by Wilding et al. published in <em>The New England Journal of Medicine</em> reported that semaglutide reduced body weight by 14.9% on average across 1,961 participants over 68 weeks.</span>
+                These results established semaglutide as one of the most effective pharmacological options for weight management in patients with type 2 diabetes.
+                <span class="u-med demo-flag" data-flag="1"> It is typically initiated at 0.25mg once weekly for four weeks, then titrated to 0.5mg, with a maximum approved dose of 2mg per week depending on tolerability.</span>
+                Always follow your prescriber's guidance on dose adjustments.
+                <span class="u-info demo-flag" data-flag="2"> As of early 2024, semaglutide is among the most widely prescribed GLP-1 receptor agonists for type 2 diabetes management globally.</span>
                 <span class="mock-stream-cursor" id="mockStreamCursor" style="display:none"></span>
               </div>
             </div>
@@ -1014,25 +1014,25 @@
     const FLAGS = [
       {
         verdict: "Flag: high risk", verdictClass: "verdict-low",
-        summary: "This sentence was flagged for <span class='mock-chip' style='color:#9068C8'>citations</span>, <span class='mock-chip' style='color:#4E90B8'>medical</span>, and <span class='mock-chip' style='color:#6070C0'>entity stats</span>.",
+        summary: "Flagged for <span class='mock-chip' style='color:#9068C8'>citations</span>, <span class='mock-chip' style='color:#4E90B8'>medical</span>, and <span class='mock-chip' style='color:#6070C0'>entity stats</span>.",
         signals: [
-          { name: "Citations",    color: "#9068C8", desc: "Author + journal reference — may be fabricated or misremembered." },
-          { name: "Medical",      color: "#4E90B8", desc: "Clinical efficacy stat with a specific patient cohort size." },
-          { name: "Entity stats", color: "#6070C0", desc: "Precise percentage attributed to a named study." },
+          { name: "Citations",    color: "#9068C8", desc: "Named author + journal — AI models frequently confuse or fabricate citation details." },
+          { name: "Medical",      color: "#4E90B8", desc: "Clinical efficacy stat with a specific patient count and outcome percentage." },
+          { name: "Entity stats", color: "#6070C0", desc: "Precise figure (14.9%) attributed to a named study — verify against the primary source." },
         ]
       },
       {
         verdict: "Flag: moderate", verdictClass: "verdict-medium",
-        summary: "This sentence was flagged for <span class='mock-chip' style='color:#4E90B8'>medical</span> content.",
+        summary: "Flagged for <span class='mock-chip' style='color:#4E90B8'>medical</span> dosage information.",
         signals: [
-          { name: "Medical", color: "#4E90B8", desc: "Specific drug dosage and titration protocol — verify with a physician before acting." },
+          { name: "Medical", color: "#4E90B8", desc: "Specific drug dosage and titration schedule — verify with a prescriber before acting." },
         ]
       },
       {
         verdict: "Flag: minor", verdictClass: "verdict-info",
-        summary: "This sentence was flagged for a <span class='mock-chip' style='color:#8AAE50'>temporal</span> claim.",
+        summary: "Flagged for a <span class='mock-chip' style='color:#8AAE50'>temporal</span> claim.",
         signals: [
-          { name: "Temporal", color: "#8AAE50", desc: "Time-sensitive claim — this may have changed since the model's training cutoff." },
+          { name: "Temporal", color: "#8AAE50", desc: "\"As of early 2024\" — prescribing trends may have shifted since the model's training cutoff." },
         ]
       }
     ];
@@ -1146,57 +1146,6 @@
     document.addEventListener("click", (e) => {
       if (!e.target.closest(".demo-flag") && !e.target.closest(".mock-tt")) closeTooltip();
     });
-
-
-    // Scrollytelling
-    const SCROLLY = [
-      {
-        sentence: `According to a <span class="scrolly-hl scrolly-hl-r">2023 study by Williams and Park published in <em>Cell</em></span>, the CRISPR-Cas9 system achieved 94% efficiency across 47 patients.`,
-        verdict: "Flag: high risk", vClass: "verdict-low",
-        why: "Named author, journal, and specific stat — all high-risk for fabrication.",
-        signalName: "Citations", signalColor: "#9068C8",
-        signalDesc: "AI models frequently invent plausible-sounding academic citations."
-      },
-      {
-        sentence: `<span class="scrolly-hl scrolly-hl-o">Metformin is typically prescribed at 500mg twice daily</span>, with doses titrated up to 2000mg per day based on tolerability.`,
-        verdict: "Flag: moderate", vClass: "verdict-medium",
-        why: "Specific drug dosage and titration protocol — verify before acting.",
-        signalName: "Medical", signalColor: "#4E90B8",
-        signalDesc: "Precision medical claims require verification with a clinician."
-      },
-      {
-        sentence: `<span class="scrolly-hl scrolly-hl-g">As of early 2024, this remains one of the most widely used first-line treatments globally.</span>`,
-        verdict: "Flag: minor", vClass: "verdict-info",
-        why: "Time-anchored claim that may have changed since the model's training cutoff.",
-        signalName: "Temporal", signalColor: "#8AAE50",
-        signalDesc: "Time-sensitive statement — the model's knowledge may be out of date."
-      }
-    ];
-
-    function renderScrollyStep(idx) {
-      const d = SCROLLY[idx];
-      document.getElementById("scrollyPreview").innerHTML        = d.sentence;
-      document.getElementById("scrollyVerdict").textContent      = d.verdict;
-      document.getElementById("scrollyVerdict").className        = "scrolly-tt-verdict " + d.vClass;
-      document.getElementById("scrollyWhy").textContent          = d.why;
-      document.getElementById("scrollySignalName").textContent   = d.signalName;
-      document.getElementById("scrollySignalName").style.color   = d.signalColor;
-      document.getElementById("scrollySignal").style.borderLeftColor = d.signalColor;
-      document.getElementById("scrollySignalDesc").textContent   = d.signalDesc;
-    }
-    renderScrollyStep(0);
-
-    const scrollySteps = document.querySelectorAll(".scrolly-step");
-    const stepObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          scrollySteps.forEach(s => s.classList.remove("s-active"));
-          entry.target.classList.add("s-active");
-          renderScrollyStep(parseInt(entry.target.dataset.step));
-        }
-      });
-    }, { threshold: 0.55 });
-    scrollySteps.forEach(s => stepObserver.observe(s));
   </script>
 
   <!-- How it works -->
