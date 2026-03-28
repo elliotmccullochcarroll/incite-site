@@ -223,9 +223,20 @@
     .steps {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
+      gap: 0;
+      position: relative;
     }
-    @media (max-width: 768px) { .steps { grid-template-columns: 1fr 1fr; } }
+    .steps::before {
+      content: "";
+      position: absolute;
+      top: 36px;
+      left: calc(12.5% + 8px);
+      right: calc(12.5% + 8px);
+      height: 1px;
+      background: linear-gradient(to right, var(--border), var(--accent), var(--border));
+      z-index: 0;
+    }
+    @media (max-width: 768px) { .steps { grid-template-columns: 1fr 1fr; } .steps::before { display: none; } }
     @media (max-width: 480px) { .steps { grid-template-columns: 1fr; } }
 
     .step {
@@ -235,6 +246,9 @@
       padding: 28px 24px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.04);
       transition: box-shadow 0.2s, transform 0.2s;
+      margin: 0 8px;
+      position: relative;
+      z-index: 1;
     }
     .step:hover {
       box-shadow: 0 4px 16px rgba(0,0,0,0.08);
@@ -281,6 +295,12 @@
       display: flex;
       gap: 12px;
       align-items: flex-start;
+      transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+    }
+    .signal-cell:hover {
+      transform: translateY(-2px);
+      border-color: var(--signal-color, var(--border));
+      box-shadow: 0 4px 20px var(--signal-glow, rgba(0,0,0,0.08));
     }
     .signal-dot {
       width: 9px;
@@ -299,6 +319,17 @@
       font-size: 12px;
       color: var(--muted);
       line-height: 1.5;
+    }
+
+    /* ── Scroll fade-in ── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     /* ── Install ── */
@@ -1057,6 +1088,12 @@
   </div>
 
   <script>
+    // Scroll fade-in
+    const fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("visible"); fadeObserver.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll(".fade-up").forEach(el => fadeObserver.observe(el));
+
     // Hero underline draw-in
     setTimeout(() => {
       document.querySelector(".hero h1 em").classList.add("drawn");
@@ -1200,7 +1237,7 @@
   </script>
 
   <!-- How it works -->
-  <section class="section" id="how-it-works">
+  <section class="section fade-up" id="how-it-works">
     <p class="section-label">How it works</p>
     <h2>Uncertainty, made visible.</h2>
     <p class="section-sub">Every sentence Claude generates is scored against signals that predict where AI goes wrong most often.</p>
@@ -1236,45 +1273,45 @@
   <hr class="divider">
 
   <!-- Signals -->
-  <section class="section">
+  <section class="section fade-up">
     <p class="section-label">Signal types</p>
     <h2>Trained on where AI fails.</h2>
     <p class="section-sub">Nine risk patterns — each targeting a category where AI models hallucinate or mislead most often.</p>
 
     <div class="signals-grid">
-      <div class="signal-cell">
+      <div class="signal-cell" style="--signal-color:#9068C8;--signal-glow:rgba(144,104,200,0.15)">
         <div class="signal-dot" style="background:#9068C8"></div>
         <div><h4>Citations</h4><p>Authors, journals, and studies that may be fabricated.</p></div>
       </div>
-      <div class="signal-cell">
+      <div class="signal-cell" style="--signal-color:#4E90B8;--signal-glow:rgba(78,144,184,0.15)">
         <div class="signal-dot" style="background:#4E90B8"></div>
         <div><h4>Medical</h4><p>Drug names, dosages, and clinical claims.</p></div>
       </div>
-      <div class="signal-cell">
+      <div class="signal-cell" style="--signal-color:#4E9E68;--signal-glow:rgba(78,158,104,0.15)">
         <div class="signal-dot" style="background:#4E9E68"></div>
         <div><h4>Legal</h4><p>Statutes, case law, and regulatory conclusions.</p></div>
       </div>
-      <div class="signal-cell">
+      <div class="signal-cell" style="--signal-color:#6070C0;--signal-glow:rgba(96,112,192,0.15)">
         <div class="signal-dot" style="background:#6070C0"></div>
         <div><h4>Entity stats</h4><p>Specific figures attributed to named organisations.</p></div>
       </div>
-      <div class="signal-cell">
+      <div class="signal-cell" style="--signal-color:#C87840;--signal-glow:rgba(200,120,64,0.15)">
         <div class="signal-dot" style="background:#C87840"></div>
         <div><h4>Superlatives</h4><p>"First", "only", "largest" — claims that require exhaustive knowledge.</p></div>
       </div>
-      <div class="signal-cell">
+      <div class="signal-cell" style="--signal-color:#8AAE50;--signal-glow:rgba(138,174,80,0.15)">
         <div class="signal-dot" style="background:#8AAE50"></div>
         <div><h4>Temporal</h4><p>Time-sensitive claims that may have changed.</p></div>
       </div>
-      <div class="signal-cell">
+      <div class="signal-cell" style="--signal-color:#D08060;--signal-glow:rgba(208,128,96,0.15)">
         <div class="signal-dot" style="background:#D08060"></div>
         <div><h4>Hedging</h4><p>The model signalling its own uncertainty.</p></div>
       </div>
-      <div class="signal-cell">
+      <div class="signal-cell" style="--signal-color:#A84848;--signal-glow:rgba(168,72,72,0.15)">
         <div class="signal-dot" style="background:#A84848"></div>
         <div><h4>Negated claims</h4><p>Factual negations that are quietly easy to get wrong.</p></div>
       </div>
-      <div class="signal-cell">
+      <div class="signal-cell" style="--signal-color:#40ACAC;--signal-glow:rgba(64,172,172,0.15)">
         <div class="signal-dot" style="background:#40ACAC"></div>
         <div><h4>Math</h4><p>Complexity formulas and approximations with hidden assumptions.</p></div>
       </div>
@@ -1284,7 +1321,7 @@
   <hr class="divider">
 
   <!-- Install -->
-  <section class="section" id="install">
+  <section class="section fade-up" id="install">
     <div class="install-wrap">
       <div class="install-card">
         <h2>Get started in 60 seconds.</h2>
