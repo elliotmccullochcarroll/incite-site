@@ -492,6 +492,13 @@
       font-size: 13px;
       overflow: hidden;
       color: #F4EFE8;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .mock-tt.visible {
+      opacity: 1;
+      pointer-events: auto;
     }
 
     /* Header */
@@ -833,6 +840,7 @@
         if (activeFlag === idx) { activeFlag = null; resetPanel(); return; }
         activeFlag = idx;
         el.classList.add("demo-flag-active");
+        document.getElementById("mockTT").classList.add("visible");
         renderPanel(idx);
       });
     });
