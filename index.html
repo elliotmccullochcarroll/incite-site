@@ -124,9 +124,16 @@
       background-size: 0% 3px;
       transition: background-size 0.7s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .hero h1 em.drawn {
-      background-size: 100% 3px;
+    .hero h1 em.drawn { background-size: 100% 3px; }
+
+    .u-draw {
+      background-image: linear-gradient(var(--accent), var(--accent));
+      background-repeat: no-repeat;
+      background-position: 0 calc(100% + 2px);
+      background-size: 0% 2px;
+      transition: background-size 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
+    .u-draw.drawn { background-size: 100% 2px; }
     .hero-compat {
       font-size: 12px;
       color: var(--faint);
@@ -994,7 +1001,7 @@
     <div class="demo-inner">
       <p class="section-label">Live preview</p>
       <h2>See it in action.</h2>
-      <p class="section-sub">Each underlined sentence has been flagged for review. Click one to see why.</p>
+      <p class="section-sub">Each underlined sentence has been flagged for review. <span class="u-draw">Click one</span> to see why.</p>
 
       <div class="demo-frame">
       <div class="mock-browser">
@@ -1213,7 +1220,7 @@
 
   <section class="section fade-up" id="how-it-works">
     <p class="section-label">How it works</p>
-    <h2>Uncertainty, made visible.</h2>
+    <h2>Uncertainty, <span class="u-draw">made visible.</span></h2>
     <p class="section-sub">Every sentence Claude generates is scored against signals that predict where AI goes wrong most often.</p>
 
     <div class="steps">
@@ -1249,7 +1256,7 @@
   <!-- Signals -->
   <section class="section fade-up">
     <p class="section-label">Signal types</p>
-    <h2>Trained on where AI fails.</h2>
+    <h2>Trained on where <span class="u-draw">AI fails.</span></h2>
     <p class="section-sub">Nine risk patterns — each targeting a category where AI models hallucinate or mislead most often.</p>
 
     <div class="signals-grid">
@@ -1331,25 +1338,43 @@
   </footer>
 
   <script>
-    // Scroll fade-in
+    // Scroll fade-in + underline draw-ins
     const fadeObserver = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (e.isIntersecting) {
           e.target.classList.add("visible");
+          // Trigger any u-draw elements inside this section
+          e.target.querySelectorAll(".u-draw").forEach((el, i) => {
+            setTimeout(() => el.classList.add("drawn"), 200 + i * 150);
+          });
           fadeObserver.unobserve(e.target);
         }
       });
     }, { rootMargin: "0px 0px -40px 0px", threshold: 0 });
 
     document.querySelectorAll(".fade-up").forEach(el => {
-      // If already visible in viewport on load, show immediately
       const rect = el.getBoundingClientRect();
       if (rect.top < window.innerHeight) {
         el.classList.add("visible");
+        el.querySelectorAll(".u-draw").forEach((u, i) => {
+          setTimeout(() => u.classList.add("drawn"), 200 + i * 150);
+        });
       } else {
         fadeObserver.observe(el);
       }
     });
+
+    // Also handle u-draw in the demo section (not a fade-up)
+    const demoDrawObserver = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        entries[0].target.querySelectorAll(".u-draw").forEach((el, i) => {
+          setTimeout(() => el.classList.add("drawn"), 200 + i * 150);
+        });
+        demoDrawObserver.disconnect();
+      }
+    }, { threshold: 0.3 });
+    const demoSection = document.querySelector(".demo-section");
+    if (demoSection) demoDrawObserver.observe(demoSection);
 
     // Hero underline draw-in
     setTimeout(() => {
