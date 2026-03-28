@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InCite — Know what to trust</title>
+  <meta name="description" content="InCite flags uncertainty in AI responses in real time, so you always know what to verify before you act.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0E0A07;
+      --bg-card:  #181210;
+      --border:   rgba(212, 180, 140, 0.10);
+      --text:     #F2EDE5;
+      --muted:    #9A8E82;
+      --faint:    #4A4440;
+      --accent:   #CF6C3F;
+      --accent2:  #B8A070;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* ── Nav ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 48px;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-link {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .nav-link:hover { color: var(--text); }
+
+    /* ── Hero ── */
+    .hero {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 120px 24px 100px;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 28px;
+    }
+    .hero h1 {
+      font-size: clamp(40px, 6vw, 64px);
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      line-height: 1.08;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent2);
+    }
+    .hero-sub {
+      font-size: 18px;
+      line-height: 1.65;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 48px;
+    }
+    .cta-row {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 13px 28px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.15s, transform 0.12s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary:hover { background: #E07848; transform: translateY(-1px); }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 13px 20px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .btn-secondary:hover { color: var(--text); border-color: rgba(212,180,140,0.25); }
+
+    /* ── Divider ── */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0 48px;
+    }
+
+    /* ── How it works ── */
+    .section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 100px 24px;
+    }
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    .section h2 {
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 700;
+      letter-spacing: -0.8px;
+      line-height: 1.15;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 16px;
+      color: var(--muted);
+      text-align: center;
+      max-width: 480px;
+      margin: 0 auto 64px;
+      line-height: 1.6;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .step {
+      background: var(--bg-card);
+      padding: 32px 28px;
+    }
+    .step-num {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--faint);
+      margin-bottom: 18px;
+    }
+    .step-icon {
+      font-size: 22px;
+      margin-bottom: 14px;
+    }
+    .step h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+      letter-spacing: -0.2px;
+    }
+    .step p {
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Signals ── */
+    .signals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 2px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .signal-cell {
+      background: var(--bg-card);
+      padding: 20px 20px 18px;
+    }
+    .signal-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+    }
+    .signal-cell h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 5px;
+    }
+    .signal-cell p {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── Install ── */
+    .install-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 56px 48px;
+      text-align: center;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+    .install-card h2 {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.6px;
+      margin-bottom: 12px;
+    }
+    .install-card p {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 36px;
+    }
+    .install-steps {
+      list-style: none;
+      text-align: left;
+      margin-bottom: 40px;
+    }
+    .install-steps li {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .install-steps li:last-child { border-bottom: none; }
+    .install-steps li strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      min-width: 22px;
+      border-radius: 50%;
+      background: rgba(207,108,63,0.15);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    footer p {
+      font-size: 13px;
+      color: var(--faint);
+    }
+    .footer-note {
+      font-size: 12px;
+      color: var(--faint);
+    }
+
+    @media (max-width: 600px) {
+      nav { padding: 20px 24px; }
+      .section-divider { margin: 0 24px; }
+      footer { padding: 28px 24px; }
+      .install-card { padding: 36px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-logo" href="#">In<span>Cite</span></a>
+    <a class="nav-link" href="#install">Install</a>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <p class="hero-eyebrow">Chrome Extension</p>
+    <h1>Know what to trust.<br><em>Before you act on it.</em></h1>
+    <p class="hero-sub">
+      InCite runs silently alongside Claude, flagging citations, medical claims, legal statements, and more — in real time, before you ever copy a word.
+    </p>
+    <div class="cta-row">
+      <a class="btn-primary" href="incite.zip" download>
+        ↓ &nbsp;Download InCite
+      </a>
+      <a class="btn-secondary" href="#how-it-works">See how it works</a>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- How it works -->
+  <section class="section" id="how-it-works">
+    <p class="section-label">How it works</p>
+    <h2>Uncertainty, made visible.</h2>
+    <p class="section-sub">Every sentence Claude generates is scored in real time against a set of signals that predict where AI most commonly goes wrong.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-icon">🔍</div>
+        <h3>Detects signals</h3>
+        <p>Pattern matching and a background AI check scan each sentence for high-risk structures.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-icon">〰</div>
+        <h3>Underlines risk</h3>
+        <p>Flagged sentences are underlined directly in Claude's UI — no separate window, no copy-paste.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-icon">↗</div>
+        <h3>Points you to sources</h3>
+        <p>Each signal links to the right place to verify — PubMed for medical, Scholar for citations, Justia for legal.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-icon">✓</div>
+        <h3>You decide</h3>
+        <p>Resolve signals you've checked. The score updates live, so you always know what's left to verify.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- Signals -->
+  <section class="section">
+    <p class="section-label">Signal types</p>
+    <h2>Trained on where AI fails.</h2>
+    <p class="section-sub">Nine distinct risk patterns — each one targeting a category where AI models hallucinate or mislead most often.</p>
+
+    <div class="signals-grid">
+      <div class="signal-cell">
+        <div class="signal-dot" style="background:#9068C8"></div>
+        <h4>Citations</h4>
+        <p>Authors, journals, and studies that may be fabricated.</p>
+      </div>
+      <div class="signal-cell">
+        <div class="signal-dot" style="background:#4E90B8"></div>
+        <h4>Medical</h4>
+        <p>Drug names, dosages, and clinical claims.</p>
+      </div>
+      <div class="signal-cell">
+        <div class="signal-dot" style="background:#4E9E68"></div>
+        <h4>Legal</h4>
+        <p>Statutes, case law, and regulatory conclusions.</p>
+      </div>
+      <div class="signal-cell">
+        <div class="signal-dot" style="background:#6070C0"></div>
+        <h4>Entity stats</h4>
+        <p>Specific figures attributed to named organisations.</p>
+      </div>
+      <div class="signal-cell">
+        <div class="signal-dot" style="background:#C87840"></div>
+        <h4>Superlatives</h4>
+        <p>"First", "only", "largest" — claims that require exhaustive knowledge.</p>
+      </div>
+      <div class="signal-cell">
+        <div class="signal-dot" style="background:#8AAE50"></div>
+        <h4>Temporal</h4>
+        <p>Time-sensitive claims that may have changed.</p>
+      </div>
+      <div class="signal-cell">
+        <div class="signal-dot" style="background:#D08060"></div>
+        <h4>Hedging</h4>
+        <p>The model signalling its own uncertainty.</p>
+      </div>
+      <div class="signal-cell">
+        <div class="signal-dot" style="background:#A84848"></div>
+        <h4>Negated claims</h4>
+        <p>Factual negations that are easy to get quietly wrong.</p>
+      </div>
+      <div class="signal-cell">
+        <div class="signal-dot" style="background:#40ACAC"></div>
+        <h4>Math</h4>
+        <p>Complexity formulas and approximations with hidden assumptions.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- Install -->
+  <section class="section" id="install">
+    <div class="install-card">
+      <h2>Get started in 60 seconds.</h2>
+      <p>InCite is a developer preview. Install it manually in Chrome — no store required.</p>
+      <ol class="install-steps">
+        <li>
+          <span class="step-badge">1</span>
+          <span><strong>Download</strong> the extension zip using the button below and unzip it.</span>
+        </li>
+        <li>
+          <span class="step-badge">2</span>
+          <span>Open <strong>chrome://extensions</strong> and enable <strong>Developer mode</strong> in the top right.</span>
+        </li>
+        <li>
+          <span class="step-badge">3</span>
+          <span>Click <strong>Load unpacked</strong> and select the unzipped <strong>extension</strong> folder.</span>
+        </li>
+        <li>
+          <span class="step-badge">4</span>
+          <span>Open <strong>claude.ai</strong> and start a conversation. Flagged sentences will underline automatically.</span>
+        </li>
+      </ol>
+      <a class="btn-primary" href="incite.zip" download style="width:100%;justify-content:center;font-size:15px;padding:15px;">
+        ↓ &nbsp;Download InCite
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <p>InCite — Early preview</p>
+    <p class="footer-note">Works with Claude.ai · Chrome only</p>
+  </footer>
+
+</body>
+</html>
