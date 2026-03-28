@@ -433,18 +433,8 @@
 
       <h3>Phase 2 — LLM verification</h3>
       <p>
-        Sentences that clear a minimum threshold in phase one are passed to Claude Haiku with a structured prompt asking it to score the sentence across the same signal dimensions. The Haiku response is a JSON object of per-signal scores between 0 and 1. These scores are combined with the regex scores using a weighted average, with the LLM score carrying higher weight for signals that require semantic understanding (medical, legal, negated) and lower weight for signals where pattern matching is reliable (citations, entity stats).
+        Sentences that clear a minimum threshold in phase one are passed to Claude Haiku with a structured prompt asking it to score the sentence across the same signal dimensions. The Haiku response is a set of per-signal scores that are merged with the regex scores using a signal-specific weighting scheme. Signals that require semantic understanding receive higher LLM weight; signals where pattern matching is highly reliable receive lower LLM weight.
       </p>
-      <div class="code-block">
-<span class="cm">// Simplified scoring merge</span>
-<span class="ck">const</span> combined = Object.keys(signals).reduce((acc, key) => {
-  <span class="ck">const</span> regexScore = phase1Scores[key] ?? <span class="cn">0</span>;
-  <span class="ck">const</span> llmScore   = phase2Scores[key] ?? <span class="cn">0</span>;
-  <span class="ck">const</span> weight     = LLM_WEIGHTS[key] ?? <span class="cn">0.5</span>;
-  acc[key] = regexScore * (<span class="cn">1</span> - weight) + llmScore * weight;
-  <span class="ck">return</span> acc;
-}, {});
-      </div>
 
       <h3>Sentence segmentation</h3>
       <p>
@@ -482,16 +472,8 @@
       <p>
         Individual signal scores are combined into a single <strong>uncertainty score</strong> between 0 and 1. The combination is multiplicative rather than additive: each fired signal multiplies the base uncertainty upward. This reflects the real-world observation that co-occurring signals compound risk — a citation to a specific study about a drug dosage is riskier than either signal alone.
       </p>
-      <div class="code-block">
-<span class="cm">// Multiplicative combination</span>
-<span class="ck">const</span> BASE = <span class="cn">0.08</span>;  <span class="cm">// minimum uncertainty floor</span>
-<span class="ck">let</span> score = BASE;
-<span class="ck">for</span> (<span class="ck">const</span> [key, val] <span class="ck">of</span> Object.entries(signals)) {
-  <span class="ck">if</span> (val > <span class="cn">0</span>) score = score + ((<span class="cn">1</span> - score) * val * SIGNAL_WEIGHTS[key]);
-}
-      </div>
       <p>
-        A base uncertainty floor of <strong>0.08</strong> ensures that even a sentence with no fired signals retains a small residual uncertainty — an acknowledgement that absence of signals does not guarantee accuracy. The score can be further modified by <strong>risk multipliers</strong>: compound signals like "citation + temporal" or "medical + legal" apply an additional multiplier when both constituent signals fire simultaneously.
+        A small base uncertainty floor ensures that even a sentence with no fired signals retains a residual uncertainty — an acknowledgement that absence of signals does not guarantee accuracy. The score can be further modified by <strong>risk multipliers</strong>: compound signals like "citation + temporal" or "medical + legal" apply an additional multiplier when both constituent signals fire simultaneously.
       </p>
       <p>
         When a user resolves a signal (marking it as checked), the signal's contribution is removed and the score is recomputed. This allows the uncertainty to decrease as the user works through the flags, giving a live indication of how much risk remains.
@@ -626,7 +608,7 @@
 </div>
 
 <footer>
-  <p>InCite — Early preview</p>
+  <p>© 2026 InCite. All rights reserved.</p>
   <a href="index.html">← Back to home</a>
 </footer>
 
