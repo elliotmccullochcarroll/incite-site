@@ -126,16 +126,6 @@
     }
     .hero h1 em.drawn { background-size: 100% 3px; }
 
-    .u-draw {
-      display: inline;
-      background-image: linear-gradient(var(--accent), var(--accent));
-      background-repeat: no-repeat;
-      background-position: 0 calc(100% + 3px);
-      background-size: 0% 3px;
-      padding-bottom: 3px;
-      transition: background-size 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .u-draw.drawn { background-size: 100% 3px; }
     .hero-compat {
       font-size: 12px;
       color: var(--faint);
@@ -1003,7 +993,7 @@
     <div class="demo-inner">
       <p class="section-label">Live preview</p>
       <h2>See it in action.</h2>
-      <p class="section-sub">Each underlined sentence has been flagged for review. <span class="u-draw">Click one</span> to see why.</p>
+      <p class="section-sub">Each underlined sentence has been flagged for review. Click one to see why.</p>
 
       <div class="demo-frame">
       <div class="mock-browser">
@@ -1116,9 +1106,6 @@
     function runDrawSequence() {
       if (underlinesDrawn) return;
       underlinesDrawn = true;
-      // Draw "Click one" subtitle underline immediately
-      const clickOne = document.querySelector(".demo-section .u-draw");
-      if (clickOne) setTimeout(() => clickOne.classList.add("drawn"), 200);
       // 1. Show streaming cursor
       streamCursor.style.display = "inline-block";
       // 2. After 600ms, hide cursor, show scanning, and start drawing first underline simultaneously
@@ -1225,7 +1212,7 @@
 
   <section class="section fade-up" id="how-it-works">
     <p class="section-label">How it works</p>
-    <h2>Uncertainty, <span class="u-draw">made visible.</span></h2>
+    <h2>Uncertainty, made visible.</h2>
     <p class="section-sub">Every sentence Claude generates is scored against signals that predict where AI goes wrong most often.</p>
 
     <div class="steps">
@@ -1261,7 +1248,7 @@
   <!-- Signals -->
   <section class="section fade-up">
     <p class="section-label">Signal types</p>
-    <h2>Trained on where <span class="u-draw">AI fails.</span></h2>
+    <h2>Trained on where AI fails.</h2>
     <p class="section-sub">Nine risk patterns — each targeting a category where AI models hallucinate or mislead most often.</p>
 
     <div class="signals-grid">
@@ -1359,17 +1346,6 @@
       else { fadeObserver.observe(el); }
     });
 
-    // u-draw underlines — each observed independently
-    const uObserver = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          setTimeout(() => e.target.classList.add("drawn"), 300);
-          uObserver.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0 });
-
-    document.querySelectorAll(".u-draw").forEach(el => uObserver.observe(el));
 
     // Hero underline draw-in
     setTimeout(() => {
