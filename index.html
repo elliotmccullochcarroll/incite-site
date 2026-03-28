@@ -593,7 +593,43 @@
       font-family: "Inter", sans-serif;
     }
 
-    /* Underlines */
+    /* Streaming cursor */
+    .mock-stream-cursor {
+      display: inline-block;
+      width: 2px; height: 1em;
+      background: #B8956A;
+      vertical-align: text-bottom;
+      margin-left: 1px;
+      animation: cursorBlink 0.85s step-end infinite;
+    }
+    @keyframes cursorBlink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+    /* Scanning pill */
+    .mock-scanning {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: rgba(0,0,0,0.35);
+      font-family: "Inter", sans-serif;
+      margin-top: 12px;
+      opacity: 0;
+      transition: opacity 0.35s;
+    }
+    .mock-scanning.visible { opacity: 1; }
+    .mock-scan-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: scanPulse 1.1s ease-in-out infinite;
+    }
+    @keyframes scanPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.35; transform: scale(0.65); }
+    }
+
     /* Underlines drawn in via background-size animation */
     .demo-flag {
       cursor: pointer;
@@ -886,7 +922,11 @@
                 <span class="u-med demo-flag" data-flag="1"> Metformin is typically prescribed at 500mg twice daily for type 2 diabetes, with doses titrated up to 2000mg per day based on tolerability.</span>
                 Always consult your physician before adjusting dosage.
                 <span class="u-info demo-flag" data-flag="2"> As of early 2024, this remains one of the most widely used first-line treatments globally.</span>
+                <span class="mock-stream-cursor" id="mockStreamCursor" style="display:none"></span>
               </div>
+            </div>
+            <div class="mock-scanning" id="mockScanning">
+              <span class="mock-scan-dot"></span>InCite analysing…
             </div>
           </div>
 
@@ -949,15 +989,32 @@
 
     let activeFlag = null;
 
-    // Underline draw-in on scroll into view
+    // Streaming cursor → scanning → underline draw-in sequence
     let underlinesDrawn = false;
-    const flags = Array.from(document.querySelectorAll(".demo-flag"));
+    const flags         = Array.from(document.querySelectorAll(".demo-flag"));
+    const streamCursor  = document.getElementById("mockStreamCursor");
+    const scanningEl    = document.getElementById("mockScanning");
+
+    function runDrawSequence() {
+      if (underlinesDrawn) return;
+      underlinesDrawn = true;
+      // 1. Show streaming cursor
+      streamCursor.style.display = "inline-block";
+      // 2. After 1.2s, hide cursor and show scanning
+      setTimeout(() => {
+        streamCursor.style.display = "none";
+        scanningEl.classList.add("visible");
+      }, 1200);
+      // 3. After another 900ms, hide scanning and draw underlines
+      setTimeout(() => {
+        scanningEl.classList.remove("visible");
+        flags.forEach((el, i) => setTimeout(() => el.classList.add("drawn"), i * 500));
+      }, 2100);
+    }
+
     const drawObserver = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && !underlinesDrawn) {
-        underlinesDrawn = true;
-        flags.forEach((el, i) => {
-          setTimeout(() => el.classList.add("drawn"), i * 500);
-        });
+      if (entries[0].isIntersecting) {
+        runDrawSequence();
         drawObserver.disconnect();
       }
     }, { threshold: 0.5 });
