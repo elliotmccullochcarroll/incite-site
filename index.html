@@ -547,18 +547,14 @@
       border: 1.5px solid #EDEBE8;
     }
 
-    /* Two-panel layout */
+    /* Single-column chat area */
     .mock-body {
-      display: grid;
-      grid-template-columns: 1fr 360px;
-      min-height: 360px;
-      align-items: start;
+      background: #F5F3EF;
+      position: relative;
+      min-height: 280px;
     }
     .mock-left {
-      background: #F5F3EF;
-      padding: 24px 24px 32px;
-      border-right: 1px solid rgba(0,0,0,0.07);
-      min-height: 360px;
+      padding: 24px 28px 32px;
     }
     .mock-prompt {
       font-size: 12.5px;
@@ -652,34 +648,40 @@
     .demo-flag-active.u-info { background-color: rgba(138,174,80,0.14); }
 
     /* Right column — wraps the floating tooltip */
-    .mock-right-col {
-      background: #EAE7E2;
-      padding: 20px 16px;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      min-height: 360px;
-    }
-
-    /* The tooltip — matches the real extension */
+    /* Inline floating tooltip */
     .mock-tt {
-      width: 100%;
-      max-width: 340px;
+      position: absolute;
+      width: 300px;
       background: #201410;
       border-radius: 12px;
       border: 1px solid rgba(212,180,140,0.15);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.25);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.50), 0 2px 8px rgba(0,0,0,0.25);
       font-family: "Inter", -apple-system, sans-serif;
       font-size: 13px;
-      overflow: hidden;
+      overflow: visible;
       color: #F4EFE8;
+      z-index: 40;
       opacity: 0;
+      transform: scale(0.95) translateY(4px);
       pointer-events: none;
-      transition: opacity 0.2s ease;
+      transition: opacity 0.15s ease, transform 0.15s ease;
     }
     .mock-tt.visible {
       opacity: 1;
+      transform: scale(1) translateY(0);
       pointer-events: auto;
+    }
+    .mock-tt-inner { border-radius: 12px; overflow: hidden; }
+    /* Arrow caret pointing up at the sentence */
+    .mock-tt::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 20px;
+      width: 0; height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-bottom: 6px solid #2A1C14;
     }
 
     /* Header */
@@ -797,23 +799,8 @@
       font-family: "Inter", sans-serif;
     }
 
-    /* Empty state */
-    .mock-tt-empty {
-      padding: 32px 16px;
-      text-align: center;
-      display: flex; flex-direction: column;
-      align-items: center; gap: 8px;
-    }
-    .mock-tt-empty-icon { font-size: 20px; opacity: 0.2; }
-    .mock-tt-empty-text { font-size: 11px; color: rgba(255,255,255,0.22); line-height: 1.5; }
-    .mock-tt-hint {
-      font-size: 10.5px; color: rgba(255,255,255,0.20);
-      text-align: center; padding: 0 14px 10px;
-    }
-
     @media (max-width: 680px) {
-      .mock-body { grid-template-columns: 1fr; }
-      .mock-right-col { min-height: 0; }
+      .mock-tt { width: calc(100% - 32px); }
     }
 
     /* ── Divider ── */
@@ -930,30 +917,26 @@
             </div>
           </div>
 
-          <!-- Right: InCite tooltip -->
-          <div class="mock-right-col">
-            <div class="mock-tt" id="mockTT">
-              <div class="mock-tt-hdr">
-                <img src="logo.svg" alt="">
-                <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.55)">InCite</span>
-                <span class="mock-tt-verdict" id="mockVerdict" style="display:none"></span>
-              </div>
-              <div class="mock-tt-tabs">
-                <div class="mock-tt-tab active">Simple</div>
-                <div class="mock-tt-tab">Advanced</div>
-              </div>
-              <div id="mockBody">
-                <div class="mock-tt-empty">
-                  <div class="mock-tt-empty-icon">〰</div>
-                  <div class="mock-tt-empty-text">Click an underlined sentence<br>to see its signal breakdown.</div>
-                </div>
-                <div class="mock-tt-hint">3 sentences flagged in this response</div>
-              </div>
-              <div class="mock-tt-footer">
-                <div class="mock-tt-improve">Suggest improvement</div>
-              </div>
+        </div>
+
+        <!-- Inline floating tooltip -->
+        <div class="mock-tt" id="mockTT">
+          <div class="mock-tt-inner">
+            <div class="mock-tt-hdr">
+              <img src="logo.svg" alt="">
+              <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.55)">InCite</span>
+              <span class="mock-tt-verdict" id="mockVerdict"></span>
+            </div>
+            <div class="mock-tt-tabs">
+              <div class="mock-tt-tab active">Simple</div>
+              <div class="mock-tt-tab">Advanced</div>
+            </div>
+            <div id="mockBody"></div>
+            <div class="mock-tt-footer">
+              <div class="mock-tt-improve">Suggest improvement</div>
             </div>
           </div>
+        </div>
 
         </div>
       </div>
@@ -1050,7 +1033,6 @@
 
       verdict.textContent = f.verdict;
       verdict.className   = "mock-tt-verdict " + f.verdictClass;
-      verdict.style.display = "";
 
       body.innerHTML = `
         <div class="mock-tt-why">
@@ -1082,29 +1064,61 @@
       }, 220);
     }
 
+    function positionTooltip(anchorEl) {
+      const tt        = document.getElementById("mockTT");
+      const body      = document.querySelector(".mock-body");
+      const bodyRect  = body.getBoundingClientRect();
+      const spanRect  = anchorEl.getBoundingClientRect();
+      const ttWidth   = 300;
+      const pad       = 12;
+
+      let top  = spanRect.bottom - bodyRect.top + 8;
+      let left = spanRect.left   - bodyRect.left;
+
+      // Clamp horizontally
+      if (left + ttWidth > bodyRect.width - pad) left = bodyRect.width - ttWidth - pad;
+      if (left < pad) left = pad;
+
+      // Flip above if not enough room below
+      const ttHeight = tt.offsetHeight || 260;
+      if (top + ttHeight > bodyRect.height - 16) top = (spanRect.top - bodyRect.top) - ttHeight - 8;
+
+      tt.style.top  = top  + "px";
+      tt.style.left = left + "px";
+    }
+
     function resetPanel() {
-      const verdict = document.getElementById("mockVerdict");
-      const body    = document.getElementById("mockBody");
-      verdict.style.display = "none";
-      body.innerHTML = `
-        <div class="mock-tt-empty">
-          <div class="mock-tt-empty-icon">〰</div>
-          <div class="mock-tt-empty-text">Click an underlined sentence<br>to see its signal breakdown.</div>
-        </div>
-        <div class="mock-tt-hint">3 sentences flagged in this response</div>`;
+      const tt = document.getElementById("mockTT");
+      tt.classList.remove("visible");
     }
 
     document.querySelectorAll(".demo-flag").forEach(el => {
       el.addEventListener("click", (e) => {
         e.stopPropagation();
+        if (!inciteOn) return;
         const idx = parseInt(el.dataset.flag);
         document.querySelectorAll(".demo-flag").forEach(f => f.classList.remove("demo-flag-active"));
         if (activeFlag === idx) { activeFlag = null; resetPanel(); return; }
         activeFlag = idx;
         el.classList.add("demo-flag-active");
-        document.getElementById("mockTT").classList.add("visible");
         renderPanel(idx);
+        // Position before showing so offsetHeight is accurate on re-open
+        const tt = document.getElementById("mockTT");
+        tt.classList.remove("visible");
+        requestAnimationFrame(() => {
+          positionTooltip(el);
+          tt.classList.add("visible");
+        });
       });
+    });
+
+    // Close tooltip on click outside
+    document.querySelector(".mock-body").addEventListener("click", (e) => {
+      if (!e.target.closest(".demo-flag") && !e.target.closest(".mock-tt")) {
+        document.querySelectorAll(".demo-flag").forEach(f => f.classList.remove("demo-flag-active"));
+        activeFlag = null;
+        resetPanel();
+      }
     });
   </script>
 
