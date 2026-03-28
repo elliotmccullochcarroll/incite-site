@@ -500,6 +500,21 @@
     .u-info:hover { background: rgba(138,174,80,0.10); }
 
     .mock-chat { position: relative; }
+    .demo-flag-active.u-low  { background: rgba(217,104,96,0.12); border-radius: 2px; }
+    .demo-flag-active.u-med  { background: rgba(200,120,64,0.12); border-radius: 2px; }
+    .demo-flag-active.u-info { background: rgba(138,174,80,0.12); border-radius: 2px; }
+
+    .mock-tt-tabs { display: flex; gap: 2px; }
+    .mock-tt-tab {
+      font-size: 10px; font-weight: 600;
+      padding: 3px 8px; border-radius: 5px;
+      color: rgba(255,255,255,0.35);
+      cursor: default;
+    }
+    .mock-tt-tab.active {
+      background: rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.80);
+    }
 
     /* Tooltip */
     .mock-tooltip {
@@ -507,6 +522,9 @@
       margin-top: 12px;
       margin-left: auto;
       width: 300px;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.18s ease, transform 0.18s ease;
       background: #201410;
       border-radius: 12px;
       box-shadow: 0 8px 32px rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.16);
@@ -604,6 +622,8 @@
       cursor: default;
       font-family: "Inter", sans-serif;
     }
+    .mock-tooltip.tt-visible { opacity: 1; transform: translateY(0); }
+
     .mock-connector {
       position: absolute;
       top: 118px;
@@ -674,7 +694,7 @@
     <div class="demo-inner">
       <p class="section-label">Live preview</p>
       <h2>See it in action.</h2>
-      <p class="section-sub">InCite underlines flagged sentences directly in Claude's UI. Click any underline to see the full signal breakdown.</p>
+      <p class="section-sub">Click any underlined sentence to see InCite's signal breakdown.</p>
 
       <div class="mock-browser">
         <div class="mock-browser-bar">
@@ -695,48 +715,25 @@
             <div class="mock-msg-row">
               <div class="mock-avatar">C</div>
               <div class="mock-message">
-                <span class="u-low">According to a 2023 study by Williams and Park published in <em>Cell</em>, the CRISPR-Cas9 system achieved 94% efficiency in correcting the sickle cell mutation across 47 patients.</span>
+                <span class="u-low demo-flag" data-flag="0">According to a 2023 study by Williams and Park published in <em>Cell</em>, the CRISPR-Cas9 system achieved 94% efficiency in correcting the sickle cell mutation across 47 patients.</span>
                 &nbsp;This represents a significant advance over prior gene-editing approaches.
-                <span class="u-med"> Metformin is typically prescribed at 500mg twice daily for type 2 diabetes, with doses titrated up to 2000mg per day based on tolerability.</span>
+                <span class="u-med demo-flag" data-flag="1"> Metformin is typically prescribed at 500mg twice daily for type 2 diabetes, with doses titrated up to 2000mg per day based on tolerability.</span>
                 &nbsp;Always consult your physician before adjusting dosage.
-                <span class="u-info"> As of early 2024, this remains one of the most widely used first-line treatments globally.</span>
+                <span class="u-info demo-flag" data-flag="2"> As of early 2024, this remains one of the most widely used first-line treatments globally.</span>
               </div>
             </div>
-            <!-- Tooltip sits below the message, floated right to simulate overlay -->
-            <div class="mock-tooltip">
+            <div class="mock-tooltip" id="mockTooltip" style="display:none">
               <div class="mock-tt-header">
-                <img src="logo.svg" class="mock-tt-logo" alt="">
-                <span class="mock-tt-badge">Flag: high risk</span>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <img src="logo.svg" class="mock-tt-logo" alt="">
+                  <span class="mock-tt-tabs">
+                    <span class="mock-tt-tab active">Simple</span>
+                    <span class="mock-tt-tab">Advanced</span>
+                  </span>
+                </div>
+                <span class="mock-tt-badge" id="mockBadge"></span>
               </div>
-              <div class="mock-tt-body">
-                <div class="mock-signal-card">
-                  <div class="mock-signal-top">
-                    <span class="mock-signal-name" style="color:#9068C8">Citations</span>
-                    <span class="mock-signal-pct" style="color:#9068C8">88%</span>
-                  </div>
-                  <div class="mock-bar-track"><div class="mock-bar-fill" style="width:88%;background:#9068C8"></div></div>
-                  <div class="mock-signal-desc">Author + journal reference that may be fabricated or misremembered.</div>
-                  <div class="mock-verify-btn">Verify ↗</div>
-                </div>
-                <div class="mock-signal-card">
-                  <div class="mock-signal-top">
-                    <span class="mock-signal-name" style="color:#4E90B8">Medical</span>
-                    <span class="mock-signal-pct" style="color:#4E90B8">74%</span>
-                  </div>
-                  <div class="mock-bar-track"><div class="mock-bar-fill" style="width:74%;background:#4E90B8"></div></div>
-                  <div class="mock-signal-desc">Specific clinical efficacy stat with patient cohort size.</div>
-                  <div class="mock-verify-btn">Verify ↗</div>
-                </div>
-                <div class="mock-signal-card">
-                  <div class="mock-signal-top">
-                    <span class="mock-signal-name" style="color:#6070C0">Entity stats</span>
-                    <span class="mock-signal-pct" style="color:#6070C0">61%</span>
-                  </div>
-                  <div class="mock-bar-track"><div class="mock-bar-fill" style="width:61%;background:#6070C0"></div></div>
-                  <div class="mock-signal-desc">Precise figure attributed to a named study or organisation.</div>
-                  <div class="mock-verify-btn">Verify ↗</div>
-                </div>
-              </div>
+              <div class="mock-tt-body" id="mockBody"></div>
               <div class="mock-tt-footer">
                 <div class="mock-improve-btn">Suggest improvement</div>
               </div>
@@ -746,6 +743,92 @@
       </div>
     </div>
   </div>
+
+  <script>
+    const FLAGS = [
+      {
+        badge: "Flag: high risk",
+        badgeColor: "#D96860",
+        badgeBg: "rgba(217,104,96,0.18)",
+        signals: [
+          { name: "Citations",    color: "#9068C8", pct: 88, desc: "Author + journal reference — may be fabricated or misremembered." },
+          { name: "Medical",      color: "#4E90B8", pct: 74, desc: "Clinical efficacy stat with specific patient cohort size." },
+          { name: "Entity stats", color: "#6070C0", pct: 61, desc: "Precise figure attributed to a named study." },
+        ]
+      },
+      {
+        badge: "Flag: moderate",
+        badgeColor: "#C87840",
+        badgeBg: "rgba(200,120,64,0.18)",
+        signals: [
+          { name: "Medical", color: "#4E90B8", pct: 82, desc: "Specific drug dosage and titration protocol — always verify with a physician." },
+        ]
+      },
+      {
+        badge: "Flag: minor",
+        badgeColor: "#8AAE50",
+        badgeBg: "rgba(138,174,80,0.18)",
+        signals: [
+          { name: "Temporal", color: "#8AAE50", pct: 55, desc: "Time-sensitive claim — may have changed since training cutoff." },
+        ]
+      }
+    ];
+
+    function renderTooltip(idx) {
+      const f = FLAGS[idx];
+      const badge = document.getElementById("mockBadge");
+      const body  = document.getElementById("mockBody");
+      badge.textContent = f.badge;
+      badge.style.color = f.badgeColor;
+      badge.style.background = f.badgeBg;
+      body.innerHTML = f.signals.map(s => `
+        <div class="mock-signal-card">
+          <div class="mock-signal-top">
+            <span class="mock-signal-name" style="color:${s.color}">${s.name}</span>
+            <span class="mock-signal-pct" style="color:${s.color}">${s.pct}%</span>
+          </div>
+          <div class="mock-bar-track"><div class="mock-bar-fill" style="width:0%;background:${s.color}" data-w="${s.pct}"></div></div>
+          <div class="mock-signal-desc">${s.desc}</div>
+          <div class="mock-verify-btn">Verify ↗</div>
+        </div>`).join("");
+      // Animate bars
+      requestAnimationFrame(() => {
+        body.querySelectorAll(".mock-bar-fill").forEach(el => {
+          el.style.transition = "width 0.4s ease";
+          el.style.width = el.dataset.w + "%";
+        });
+      });
+    }
+
+    let activeFlag = null;
+    document.querySelectorAll(".demo-flag").forEach(el => {
+      el.style.cursor = "pointer";
+      el.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const idx = parseInt(el.dataset.flag);
+        const tt  = document.getElementById("mockTooltip");
+        document.querySelectorAll(".demo-flag").forEach(f => f.classList.remove("demo-flag-active"));
+        if (activeFlag === idx) {
+          tt.style.display = "none";
+          tt.classList.remove("tt-visible");
+          activeFlag = null;
+          return;
+        }
+        activeFlag = idx;
+        el.classList.add("demo-flag-active");
+        renderTooltip(idx);
+        tt.style.display = "block";
+        requestAnimationFrame(() => tt.classList.add("tt-visible"));
+      });
+    });
+
+    document.addEventListener("click", () => {
+      const tt = document.getElementById("mockTooltip");
+      if (tt) { tt.style.display = "none"; tt.classList.remove("tt-visible"); }
+      document.querySelectorAll(".demo-flag").forEach(f => f.classList.remove("demo-flag-active"));
+      activeFlag = null;
+    });
+  </script>
 
   <hr class="divider">
 
