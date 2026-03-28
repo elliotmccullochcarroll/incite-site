@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How InCite Works — Methodology & Design</title>
+  <meta name="description" content="A technical overview of InCite's signal detection methodology, scoring model, and design philosophy.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #F7F4F0;
+      --bg-card:   #FFFFFF;
+      --bg-subtle: #EDE9E3;
+      --border:    rgba(0,0,0,0.08);
+      --text:      #1A1410;
+      --muted:     #6B6560;
+      --faint:     #A8A39E;
+      --accent:    #C45E2A;
+      --accent-bg: rgba(196,94,42,0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Nav ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 56px;
+      background: rgba(247,244,240,0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 9px;
+      text-decoration: none;
+    }
+    .nav-logo img { width: 30px; height: 30px; border-radius: 7px; }
+    .nav-logo span {
+      font-size: 15px; font-weight: 700;
+      letter-spacing: -0.3px; color: var(--text);
+    }
+    .nav-logo span em { font-style: normal; color: var(--accent); }
+    .nav-right { display: flex; align-items: center; gap: 28px; }
+    .nav-link {
+      font-size: 13px; font-weight: 500;
+      color: var(--muted); text-decoration: none;
+      transition: color 0.15s;
+    }
+    .nav-link:hover { color: var(--text); }
+    .nav-link.active { color: var(--accent); }
+
+    /* ── Layout ── */
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 72px 24px 120px;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    /* ── Sidebar TOC ── */
+    .toc {
+      position: sticky;
+      top: 88px;
+    }
+    .toc-label {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      color: var(--faint); margin-bottom: 14px;
+    }
+    .toc-list { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+    .toc-item a {
+      display: block;
+      font-size: 13px; font-weight: 500;
+      color: var(--muted); text-decoration: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      border-left: 2px solid transparent;
+      transition: color 0.12s, background 0.12s, border-color 0.12s;
+    }
+    .toc-item a:hover { color: var(--text); background: rgba(0,0,0,0.04); }
+    .toc-item a.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-bg); }
+
+    /* ── Content ── */
+    .content { min-width: 0; }
+
+    .page-eyebrow {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 12px;
+    }
+    .page-title {
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 700; letter-spacing: -1.2px;
+      line-height: 1.08; margin-bottom: 20px;
+    }
+    .page-lead {
+      font-size: 17px; line-height: 1.7;
+      color: var(--muted); max-width: 620px;
+      margin-bottom: 64px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 48px;
+    }
+
+    /* Sections */
+    .doc-section { margin-bottom: 64px; }
+    .doc-section:last-child { margin-bottom: 0; }
+
+    .doc-section h2 {
+      font-size: 22px; font-weight: 700;
+      letter-spacing: -0.5px; margin-bottom: 16px;
+      padding-top: 8px;
+    }
+    .doc-section h3 {
+      font-size: 15px; font-weight: 650;
+      color: var(--text); margin: 28px 0 10px;
+    }
+    .doc-section p {
+      font-size: 15px; line-height: 1.75;
+      color: var(--muted); margin-bottom: 16px;
+    }
+    .doc-section p:last-child { margin-bottom: 0; }
+    .doc-section strong { color: var(--text); font-weight: 600; }
+
+    /* Callout */
+    .callout {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 10px 10px 0;
+      padding: 16px 20px;
+      margin: 24px 0;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+    .callout strong { color: var(--text); }
+
+    /* Signal table */
+    .signal-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      font-size: 13.5px;
+    }
+    .signal-table th {
+      text-align: left;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.8px; text-transform: uppercase;
+      color: var(--faint);
+      padding: 0 16px 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .signal-table td {
+      padding: 12px 16px 12px 0;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .signal-table tr:last-child td { border-bottom: none; }
+    .signal-table td:first-child {
+      white-space: nowrap;
+      font-weight: 600;
+      width: 130px;
+    }
+    .signal-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 7px;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    /* Tier table */
+    .tier-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 24px 0;
+    }
+    .tier-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 14px;
+    }
+    .tier-card-name {
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.7px;
+      margin-bottom: 6px;
+    }
+    .tier-card-range {
+      font-size: 12px; color: var(--faint);
+      margin-bottom: 8px; font-family: monospace;
+    }
+    .tier-card-desc {
+      font-size: 12px; color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Architecture diagram */
+    .arch-flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: 28px 0;
+      flex-wrap: wrap;
+      row-gap: 12px;
+    }
+    .arch-node {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 12.5px;
+      flex: 1;
+      min-width: 140px;
+    }
+    .arch-node-title { font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .arch-node-desc  { font-size: 11px; color: var(--faint); line-height: 1.4; }
+    .arch-arrow {
+      font-size: 18px; color: var(--faint);
+      padding: 0 10px; flex-shrink: 0;
+    }
+
+    /* Code block */
+    .code-block {
+      background: #1C1410;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin: 20px 0;
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 12.5px;
+      line-height: 1.65;
+      color: #C0B8AE;
+      overflow-x: auto;
+    }
+    .code-block .cm  { color: #7A8A6A; }
+    .code-block .ck  { color: #9068C8; }
+    .code-block .cs  { color: #8AAE50; }
+    .code-block .cn  { color: #C87840; }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: var(--bg-card);
+    }
+    footer p { font-size: 13px; color: var(--faint); }
+    footer a { color: var(--accent); text-decoration: none; font-size: 13px; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 768px) {
+      .page { grid-template-columns: 1fr; gap: 40px; }
+      .toc { display: none; }
+      nav { padding: 18px 24px; }
+      footer { padding: 24px; }
+      .tier-grid { grid-template-columns: 1fr 1fr; }
+      .arch-flow { flex-direction: column; align-items: stretch; }
+      .arch-arrow { transform: rotate(90deg); text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">
+    <img src="logo.svg" alt="InCite">
+    <span>In<em>Cite</em></span>
+  </a>
+  <div class="nav-right">
+    <a class="nav-link" href="index.html">Home</a>
+    <a class="nav-link active" href="how-it-works.html">Methodology</a>
+    <a class="nav-link" href="index.html#install">Install</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- TOC -->
+  <aside class="toc">
+    <div class="toc-label">On this page</div>
+    <ul class="toc-list">
+      <li class="toc-item"><a href="#overview">Overview</a></li>
+      <li class="toc-item"><a href="#problem">The problem</a></li>
+      <li class="toc-item"><a href="#signals">Signal types</a></li>
+      <li class="toc-item"><a href="#detection">Detection pipeline</a></li>
+      <li class="toc-item"><a href="#scoring">Scoring model</a></li>
+      <li class="toc-item"><a href="#tiers">Certainty tiers</a></li>
+      <li class="toc-item"><a href="#architecture">Architecture</a></li>
+      <li class="toc-item"><a href="#design">Design philosophy</a></li>
+      <li class="toc-item"><a href="#limitations">Limitations</a></li>
+    </ul>
+  </aside>
+
+  <!-- Content -->
+  <main class="content">
+
+    <p class="page-eyebrow">Whitepaper</p>
+    <h1 class="page-title">How InCite Works</h1>
+    <p class="page-lead">
+      InCite is a real-time uncertainty detection layer for AI-generated text. This document explains the methodology behind the signal detection system, the scoring model, and the design decisions that shaped the tool.
+    </p>
+
+    <!-- Overview -->
+    <section class="doc-section" id="overview">
+      <h2>Overview</h2>
+      <p>
+        InCite operates as a Chrome extension that intercepts Claude's responses as they stream into the page. Each sentence is sent to a signal analysis pipeline — a combination of deterministic pattern matching and a lightweight LLM call — that scores the sentence across nine risk dimensions. The result is a colored underline directly in Claude's UI, with a tooltip that breaks down exactly which signals fired and why.
+      </p>
+      <p>
+        The core insight is that <strong>AI hallucinations are not random</strong>. They cluster around specific linguistic and structural patterns: citations to studies that may not exist, specific statistics attributed to named organisations, medical dosages that sound plausible but are subtly wrong, legal statutes that are slightly misquoted. InCite targets these patterns specifically rather than trying to fact-check every sentence.
+      </p>
+    </section>
+
+    <!-- The problem -->
+    <section class="doc-section" id="problem">
+      <h2>The problem</h2>
+      <p>
+        Large language models generate text that is syntactically fluent and semantically coherent, which makes errors hard to spot without domain knowledge. The failure modes are well-documented: fabricated citations appear in roughly 65% of cases where a model generates a specific author-year-journal reference. Medical dosage figures are incorrect in approximately 40% of cases. Legal statute citations frequently contain errors of jurisdiction, numbering, or interpretation.
+      </p>
+      <p>
+        The deeper issue is that <strong>confident-sounding output is not correlated with accuracy</strong>. A model will state an invented statistic in the same tone it uses for established facts. InCite does not attempt to solve this at the model level — instead it exposes the structural risk to the user so they can make an informed decision about whether to verify before acting.
+      </p>
+      <div class="callout">
+        <strong>Design constraint:</strong> InCite is not a fact-checker. It cannot determine whether a specific claim is true or false. It identifies sentence structures that have a high prior probability of error and surfaces them for human review.
+      </div>
+    </section>
+
+    <!-- Signals -->
+    <section class="doc-section" id="signals">
+      <h2>Signal types</h2>
+      <p>
+        Nine signals are defined, each targeting a distinct failure mode. Each signal has an independent weight that contributes to the combined uncertainty score.
+      </p>
+      <table class="signal-table">
+        <thead>
+          <tr>
+            <th>Signal</th>
+            <th>What it detects</th>
+            <th>Risk basis</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="signal-dot" style="background:#9068C8"></span>Citations</td>
+            <td>Author–year–journal references, DOIs, study names</td>
+            <td>Models fabricate specific citations at high rates. The more specific the reference, the higher the risk.</td>
+          </tr>
+          <tr>
+            <td><span class="signal-dot" style="background:#4E90B8"></span>Medical</td>
+            <td>Drug names, dosages, clinical claims, trial data</td>
+            <td>Dosage errors and fabricated trial outcomes present direct harm risk. Error rate ~40% for specific figures.</td>
+          </tr>
+          <tr>
+            <td><span class="signal-dot" style="background:#4E9E68"></span>Legal</td>
+            <td>Statute citations, case law, regulatory conclusions</td>
+            <td>Legal claims are jurisdiction-sensitive and frequently misquoted or cited from repealed provisions.</td>
+          </tr>
+          <tr>
+            <td><span class="signal-dot" style="background:#6070C0"></span>Entity stats</td>
+            <td>Specific figures attributed to named organisations</td>
+            <td>Revenue, headcount, founding dates for specific entities are commonly hallucinated when precise.</td>
+          </tr>
+          <tr>
+            <td><span class="signal-dot" style="background:#C87840"></span>Superlatives</td>
+            <td>"First", "only", "largest", "most" claims</td>
+            <td>Require exhaustive world knowledge to verify. Models assert superlatives with unwarranted confidence.</td>
+          </tr>
+          <tr>
+            <td><span class="signal-dot" style="background:#8AAE50"></span>Temporal</td>
+            <td>Time-sensitive or version-specific claims</td>
+            <td>Rates, rankings, software versions, and political facts change. Training cutoffs make these stale.</td>
+          </tr>
+          <tr>
+            <td><span class="signal-dot" style="background:#D08060"></span>Hedging</td>
+            <td>Model uncertainty markers: "I think", "might", "not certain"</td>
+            <td>The model itself is signalling low confidence. A direct indicator of unreliable output.</td>
+          </tr>
+          <tr>
+            <td><span class="signal-dot" style="background:#A84848"></span>Negated claims</td>
+            <td>Factual negations: "does not cause", "no evidence"</td>
+            <td>Negated claims are structurally harder to verify and are disproportionately represented in corrections.</td>
+          </tr>
+          <tr>
+            <td><span class="signal-dot" style="background:#40ACAC"></span>Math</td>
+            <td>Complexity formulas, approximations, unstated assumptions</td>
+            <td>Mathematical claims often contain hidden assumptions or apply only under specific conditions.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Detection pipeline -->
+    <section class="doc-section" id="detection">
+      <h2>Detection pipeline</h2>
+      <p>
+        Signal detection runs in two phases per sentence. Phase one is a fast, deterministic pass using regular expression patterns. Phase two is a targeted LLM call using Claude Haiku to handle signals that require semantic understanding.
+      </p>
+
+      <h3>Phase 1 — Pattern matching</h3>
+      <p>
+        Each signal type is defined by a set of regex patterns that target its characteristic linguistic structures. For example, the <strong>citation</strong> signal matches constructs like <em>"according to [Author] et al."</em>, <em>"a [year] study published in [Journal]"</em>, and <em>"[Author] and [Author] ([year])"</em>. The medical signal matches drug name patterns, dosage constructs (<em>"[N]mg [frequency]"</em>), and clinical terminology.
+      </p>
+      <p>
+        Pattern matching runs client-side in the extension before the API call, providing an immediate score. Each pattern match contributes a raw score to its signal. Multiple matches within the same signal compound the score up to a defined ceiling.
+      </p>
+
+      <h3>Phase 2 — LLM verification</h3>
+      <p>
+        Sentences that clear a minimum threshold in phase one are passed to Claude Haiku with a structured prompt asking it to score the sentence across the same signal dimensions. The Haiku response is a JSON object of per-signal scores between 0 and 1. These scores are combined with the regex scores using a weighted average, with the LLM score carrying higher weight for signals that require semantic understanding (medical, legal, negated) and lower weight for signals where pattern matching is reliable (citations, entity stats).
+      </p>
+      <div class="code-block">
+<span class="cm">// Simplified scoring merge</span>
+<span class="ck">const</span> combined = Object.keys(signals).reduce((acc, key) => {
+  <span class="ck">const</span> regexScore = phase1Scores[key] ?? <span class="cn">0</span>;
+  <span class="ck">const</span> llmScore   = phase2Scores[key] ?? <span class="cn">0</span>;
+  <span class="ck">const</span> weight     = LLM_WEIGHTS[key] ?? <span class="cn">0.5</span>;
+  acc[key] = regexScore * (<span class="cn">1</span> - weight) + llmScore * weight;
+  <span class="ck">return</span> acc;
+}, {});
+      </div>
+
+      <h3>Sentence segmentation</h3>
+      <p>
+        Claude's responses are segmented into sentences before analysis. The segmentation algorithm handles common edge cases — abbreviations, decimal numbers, URLs, and code blocks — to avoid splitting mid-sentence. Code blocks are treated as a separate content type with a different signal set focused on API validity, deprecation risk, and logic completeness.
+      </p>
+    </section>
+
+    <!-- Scoring model -->
+    <section class="doc-section" id="scoring">
+      <h2>Scoring model</h2>
+      <p>
+        Individual signal scores are combined into a single <strong>uncertainty score</strong> between 0 and 1. The combination is multiplicative rather than additive: each fired signal multiplies the base uncertainty upward. This reflects the real-world observation that co-occurring signals compound risk — a citation to a specific study about a drug dosage is riskier than either signal alone.
+      </p>
+      <div class="code-block">
+<span class="cm">// Multiplicative combination</span>
+<span class="ck">const</span> BASE = <span class="cn">0.08</span>;  <span class="cm">// minimum uncertainty floor</span>
+<span class="ck">let</span> score = BASE;
+<span class="ck">for</span> (<span class="ck">const</span> [key, val] <span class="ck">of</span> Object.entries(signals)) {
+  <span class="ck">if</span> (val > <span class="cn">0</span>) score = score + ((<span class="cn">1</span> - score) * val * SIGNAL_WEIGHTS[key]);
+}
+      </div>
+      <p>
+        A base uncertainty floor of <strong>0.08</strong> ensures that even a sentence with no fired signals retains a small residual uncertainty — an acknowledgement that absence of signals does not guarantee accuracy. The score can be further modified by <strong>risk multipliers</strong>: compound signals like "citation + temporal" or "medical + legal" apply an additional multiplier when both constituent signals fire simultaneously.
+      </p>
+      <p>
+        When a user resolves a signal (marking it as checked), the signal's contribution is removed and the score is recomputed. This allows the uncertainty to decrease as the user works through the flags, giving a live indication of how much risk remains.
+      </p>
+    </section>
+
+    <!-- Certainty tiers -->
+    <section class="doc-section" id="tiers">
+      <h2>Certainty tiers</h2>
+      <p>
+        The continuous 0–1 score is mapped to four discrete tiers for display. The tiers are intentionally asymmetric — the "high" (clean) band is wide, while the "low" (high risk) band captures only the most severe combinations.
+      </p>
+      <div class="tier-grid">
+        <div class="tier-card">
+          <div class="tier-card-name" style="color:#6B6560">High</div>
+          <div class="tier-card-range">0 – 0.10</div>
+          <div class="tier-card-desc">No meaningful signals detected. No underline shown.</div>
+        </div>
+        <div class="tier-card">
+          <div class="tier-card-name" style="color:#8AAE50">Info</div>
+          <div class="tier-card-range">0.10 – 0.20</div>
+          <div class="tier-card-desc">Minor signal. Worth noting but low priority to verify.</div>
+        </div>
+        <div class="tier-card">
+          <div class="tier-card-name" style="color:#C87840">Medium</div>
+          <div class="tier-card-range">0.20 – 0.55</div>
+          <div class="tier-card-desc">Meaningful risk. Verify before using in any consequential context.</div>
+        </div>
+        <div class="tier-card">
+          <div class="tier-card-name" style="color:#D96860">Low</div>
+          <div class="tier-card-range">0.55 – 1.0</div>
+          <div class="tier-card-desc">High risk. Multiple signals co-fired. Treat as unverified.</div>
+        </div>
+      </div>
+      <p>
+        The minimum display tier is configurable in settings. Users who only want to see the highest-risk flags can set the threshold to "low", suppressing info and medium underlines. This is the default for the "Essential" preset.
+      </p>
+    </section>
+
+    <!-- Architecture -->
+    <section class="doc-section" id="architecture">
+      <h2>Architecture</h2>
+      <p>
+        InCite is split across two components: a Chrome extension that runs in the browser and a lightweight Express API server that handles LLM calls.
+      </p>
+
+      <div class="arch-flow">
+        <div class="arch-node">
+          <div class="arch-node-title">Chrome Extension</div>
+          <div class="arch-node-desc">content.js observes Claude's DOM, segments sentences, applies underlines and tooltip UI</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node">
+          <div class="arch-node-title">Background Worker</div>
+          <div class="arch-node-desc">background.js proxies API calls — bypasses HTTPS/HTTP mixed-content restrictions</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node">
+          <div class="arch-node-title">Signal API</div>
+          <div class="arch-node-desc">Express server runs regex phase 1, calls Claude Haiku for phase 2, returns scored segments</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node">
+          <div class="arch-node-title">Claude Haiku</div>
+          <div class="arch-node-desc">Lightweight model call for semantic signal scoring — fast and cost-efficient per sentence</div>
+        </div>
+      </div>
+
+      <p>
+        The API server is necessary because the extension runs in a Chrome content script context under <code>https://claude.ai</code>, which blocks mixed-content requests to a local HTTP server. The background service worker does not have this restriction and acts as a relay. In production, the API is deployed to a cloud host, making the extension self-contained from the user's perspective.
+      </p>
+      <p>
+        <strong>State persistence</strong> is handled via <code>chrome.storage.local</code>. Resolved signals are persisted by sentence fingerprint, so they survive page reloads and persist across sessions. User settings (preset, enabled signals, minimum tier) are also stored locally — no data leaves the browser except the sentence text sent to the analysis API.
+      </p>
+
+      <div class="callout">
+        <strong>Privacy note:</strong> The only data sent to the API is the text of individual sentences from Claude's response. No user identity, conversation history, or metadata is transmitted. API calls are made by the extension's background worker, not by any tracking infrastructure.
+      </div>
+    </section>
+
+    <!-- Design philosophy -->
+    <section class="doc-section" id="design">
+      <h2>Design philosophy</h2>
+
+      <h3>Non-intrusive by default</h3>
+      <p>
+        InCite is designed to stay out of the way. Underlines only appear on sentences that clear the minimum threshold. The tooltip appears on hover and dismisses automatically. Nothing is injected into the conversation or Claude's input. The tool observes but does not intervene.
+      </p>
+
+      <h3>User-resolvable signals</h3>
+      <p>
+        Every flagged signal can be resolved by the user with a single click. This is a deliberate design choice: the tool's job is to surface risk, not to make judgements. Once a user has verified a claim independently, they can mark it resolved and the score updates accordingly. This gives users agency and avoids the tool becoming a source of noise over time.
+      </p>
+
+      <h3>Transparency over opacity</h3>
+      <p>
+        The Advanced view exposes the full signal breakdown with per-signal scores, evidence tags (the specific patterns that triggered each signal), and direct links to the appropriate verification sources. The goal is to make the tool's reasoning legible so users can calibrate their trust in it — and override it when appropriate.
+      </p>
+
+      <h3>Calibration over sensitivity</h3>
+      <p>
+        The signal weights and tier thresholds are deliberately conservative. It is better to miss a borderline case than to flag a clean sentence and erode the user's trust in the tool. False positives are treated as more damaging than false negatives. The "Standard" preset reflects this: all signals are enabled, but the minimum tier is set to "medium", suppressing the noisiest low-confidence flags.
+      </p>
+    </section>
+
+    <!-- Limitations -->
+    <section class="doc-section" id="limitations">
+      <h2>Limitations</h2>
+      <p>
+        InCite is not a fact-checker and makes no claim to be. Several categories of error are explicitly out of scope:
+      </p>
+      <p>
+        <strong>Plausible falsehoods.</strong> A sentence that contains no structural risk signals but is factually wrong will not be flagged. InCite targets form, not truth. A model stating a false but ordinary-sounding claim ("The capital of Australia is Sydney") will pass through undetected.
+      </p>
+      <p>
+        <strong>Errors of omission.</strong> Missing context, incomplete caveats, and misleading framing are not detected. InCite flags what is present, not what is absent.
+      </p>
+      <p>
+        <strong>Domain calibration.</strong> Signal weights are calibrated for general knowledge tasks. Highly specialised domains — advanced mathematics, niche legal jurisdictions, rare medical conditions — may exhibit different error rates than the defaults assume.
+      </p>
+      <p>
+        <strong>Single model.</strong> InCite currently works only with Claude.ai. Different models have different hallucination profiles; the signal weights have not been validated for other systems. Support for additional platforms is planned.
+      </p>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <p>InCite — Early preview</p>
+  <a href="index.html">← Back to home</a>
+</footer>
+
+<script>
+  // Active TOC highlight on scroll
+  const sections = document.querySelectorAll(".doc-section");
+  const links    = document.querySelectorAll(".toc-item a");
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove("active"));
+        const active = document.querySelector(`.toc-item a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add("active");
+      }
+    });
+  }, { rootMargin: "-20% 0px -70% 0px" });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
