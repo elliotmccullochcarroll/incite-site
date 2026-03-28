@@ -605,10 +605,11 @@
     .demo-flag-active.u-info { background-color: rgba(138,174,80,0.14); }
 
     /* Right column — wraps the floating tooltip */
-    /* Floating tooltip — lives outside .mock-browser so overflow:hidden can't clip it */
+    /* Floating tooltip — anchored to the right of the frame, overlays chat (mirrors real extension) */
     .mock-tt {
       position: absolute;
-      width: 290px;
+      right: 0;
+      width: 270px;
       background: #201410;
       border-radius: 12px;
       border: 1px solid rgba(212,180,140,0.15);
@@ -618,30 +619,15 @@
       color: #F4EFE8;
       z-index: 40;
       opacity: 0;
-      transform: scale(0.95) translateY(4px);
+      transform: translateY(6px);
       pointer-events: none;
       transition: opacity 0.18s ease, transform 0.18s ease;
     }
     .mock-tt.visible {
       opacity: 1;
-      transform: scale(1) translateY(0);
+      transform: translateY(0);
     }
     .mock-tt-inner { border-radius: 12px; overflow: hidden; }
-    .mock-tt-caret {
-      position: absolute;
-      width: 0; height: 0;
-      border-left: 7px solid transparent;
-      border-right: 7px solid transparent;
-      pointer-events: none;
-    }
-    .mock-tt-caret.up {
-      border-bottom: 7px solid #2A1C14;
-      top: -7px;
-    }
-    .mock-tt-caret.down {
-      border-top: 7px solid #201410;
-      bottom: -7px;
-    }
 
     /* Header */
     .mock-tt-hdr {
@@ -1003,7 +989,6 @@
 
       <!-- Tooltip lives here, outside mock-browser, so overflow:hidden can't clip it -->
       <div class="mock-tt" id="mockTT">
-        <div class="mock-tt-caret up" id="mockTTCaret"></div>
         <div class="mock-tt-inner">
           <div class="mock-tt-hdr">
             <img src="logo.svg" alt="">
@@ -1112,36 +1097,22 @@
 
     function positionTooltip(anchorEl) {
       const tt          = document.getElementById("mockTT");
-      const caret       = document.getElementById("mockTTCaret");
       const frame       = document.querySelector(".demo-frame");
       const browser     = document.querySelector(".mock-browser");
       const frameRect   = frame.getBoundingClientRect();
       const browserRect = browser.getBoundingClientRect();
       const spanRect    = anchorEl.getBoundingClientRect();
-      const ttWidth     = 290;
-      const pad         = 14;
+      const ttHeight    = tt.offsetHeight || 240;
+      const margin      = 12;
 
-      let top  = spanRect.bottom - frameRect.top + 8;
-      let left = spanRect.left   - frameRect.left;
+      // Vertically center on the sentence, clamped within the browser bounds
+      const browserTop    = browserRect.top    - frameRect.top;
+      const browserBottom = browserRect.bottom - frameRect.top;
+      let top = (spanRect.top + spanRect.bottom) / 2 - frameRect.top - ttHeight / 2;
+      top = Math.max(browserTop + margin, Math.min(top, browserBottom - ttHeight - margin));
 
-      // Clamp horizontally within frame
-      if (left + ttWidth > frameRect.width - pad) left = frameRect.width - ttWidth - pad;
-      if (left < pad) left = pad;
-
-      // Flip above if tooltip would exit browser bottom
-      const browserBottom = browserRect.bottom - frameRect.top - pad;
-      const ttHeight = tt.offsetHeight || 240;
-      const flipped = (top + ttHeight > browserBottom);
-      if (flipped) top = (spanRect.top - frameRect.top) - ttHeight - 8;
-
-      tt.style.top  = top  + "px";
-      tt.style.left = left + "px";
-
-      // Align caret with the horizontal center of the anchor span
-      const spanCenterX = (spanRect.left + spanRect.right) / 2 - frameRect.left;
-      const caretLeft   = Math.max(12, Math.min(spanCenterX - left - 7, ttWidth - 26));
-      caret.style.left  = caretLeft + "px";
-      caret.className   = "mock-tt-caret " + (flipped ? "down" : "up");
+      tt.style.top = top + "px";
+      // left/right is handled entirely by CSS (right: 0)
     }
 
     // Click handlers — user-driven interaction
