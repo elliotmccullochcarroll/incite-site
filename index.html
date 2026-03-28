@@ -379,7 +379,6 @@
       background: #fff;
       border-radius: 16px;
       box-shadow: 0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
-      overflow: hidden;
       border: 1px solid rgba(0,0,0,0.07);
     }
     .mock-browser-bar {
@@ -500,11 +499,13 @@
     }
     .u-info:hover { background: rgba(138,174,80,0.10); }
 
+    .mock-chat { position: relative; }
+
     /* Tooltip */
     .mock-tooltip {
-      position: absolute;
-      top: 70px;
-      right: -20px;
+      position: relative;
+      margin-top: 12px;
+      margin-left: auto;
       width: 300px;
       background: #201410;
       border-radius: 12px;
@@ -699,46 +700,45 @@
                 <span class="u-med"> Metformin is typically prescribed at 500mg twice daily for type 2 diabetes, with doses titrated up to 2000mg per day based on tolerability.</span>
                 &nbsp;Always consult your physician before adjusting dosage.
                 <span class="u-info"> As of early 2024, this remains one of the most widely used first-line treatments globally.</span>
-
-                <!-- Tooltip -->
-                <div class="mock-tooltip">
-                  <div class="mock-tt-header">
-                    <img src="logo.svg" class="mock-tt-logo" alt="">
-                    <span class="mock-tt-badge">Flag: high risk</span>
+              </div>
+            </div>
+            <!-- Tooltip sits below the message, floated right to simulate overlay -->
+            <div class="mock-tooltip">
+              <div class="mock-tt-header">
+                <img src="logo.svg" class="mock-tt-logo" alt="">
+                <span class="mock-tt-badge">Flag: high risk</span>
+              </div>
+              <div class="mock-tt-body">
+                <div class="mock-signal-card">
+                  <div class="mock-signal-top">
+                    <span class="mock-signal-name" style="color:#9068C8">Citations</span>
+                    <span class="mock-signal-pct" style="color:#9068C8">88%</span>
                   </div>
-                  <div class="mock-tt-body">
-                    <div class="mock-signal-card">
-                      <div class="mock-signal-top">
-                        <span class="mock-signal-name" style="color:#9068C8">Citations</span>
-                        <span class="mock-signal-pct" style="color:#9068C8">88%</span>
-                      </div>
-                      <div class="mock-bar-track"><div class="mock-bar-fill" style="width:88%;background:#9068C8"></div></div>
-                      <div class="mock-signal-desc">Author + journal reference that may be fabricated or misremembered.</div>
-                      <div class="mock-verify-btn">Verify ↗</div>
-                    </div>
-                    <div class="mock-signal-card">
-                      <div class="mock-signal-top">
-                        <span class="mock-signal-name" style="color:#4E90B8">Medical</span>
-                        <span class="mock-signal-pct" style="color:#4E90B8">74%</span>
-                      </div>
-                      <div class="mock-bar-track"><div class="mock-bar-fill" style="width:74%;background:#4E90B8"></div></div>
-                      <div class="mock-signal-desc">Specific clinical efficacy stat with patient cohort size.</div>
-                      <div class="mock-verify-btn">Verify ↗</div>
-                    </div>
-                    <div class="mock-signal-card">
-                      <div class="mock-signal-top">
-                        <span class="mock-signal-name" style="color:#6070C0">Entity stats</span>
-                        <span class="mock-signal-pct" style="color:#6070C0">61%</span>
-                      </div>
-                      <div class="mock-bar-track"><div class="mock-bar-fill" style="width:61%;background:#6070C0"></div></div>
-                      <div class="mock-signal-desc">Precise figure attributed to a named study or organisation.</div>
-                      <div class="mock-verify-btn">Verify ↗</div>
-                    </div>
-                  </div>
-                  <div class="mock-tt-footer">
-                    <div class="mock-improve-btn">Suggest improvement</div>
-                  </div>
+                  <div class="mock-bar-track"><div class="mock-bar-fill" style="width:88%;background:#9068C8"></div></div>
+                  <div class="mock-signal-desc">Author + journal reference that may be fabricated or misremembered.</div>
+                  <div class="mock-verify-btn">Verify ↗</div>
                 </div>
+                <div class="mock-signal-card">
+                  <div class="mock-signal-top">
+                    <span class="mock-signal-name" style="color:#4E90B8">Medical</span>
+                    <span class="mock-signal-pct" style="color:#4E90B8">74%</span>
+                  </div>
+                  <div class="mock-bar-track"><div class="mock-bar-fill" style="width:74%;background:#4E90B8"></div></div>
+                  <div class="mock-signal-desc">Specific clinical efficacy stat with patient cohort size.</div>
+                  <div class="mock-verify-btn">Verify ↗</div>
+                </div>
+                <div class="mock-signal-card">
+                  <div class="mock-signal-top">
+                    <span class="mock-signal-name" style="color:#6070C0">Entity stats</span>
+                    <span class="mock-signal-pct" style="color:#6070C0">61%</span>
+                  </div>
+                  <div class="mock-bar-track"><div class="mock-bar-fill" style="width:61%;background:#6070C0"></div></div>
+                  <div class="mock-signal-desc">Precise figure attributed to a named study or organisation.</div>
+                  <div class="mock-verify-btn">Verify ↗</div>
+                </div>
+              </div>
+              <div class="mock-tt-footer">
+                <div class="mock-improve-btn">Suggest improvement</div>
               </div>
             </div>
           </div>
