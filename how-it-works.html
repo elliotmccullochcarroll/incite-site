@@ -309,6 +309,7 @@
       <li class="toc-item"><a href="#problem">The problem</a></li>
       <li class="toc-item"><a href="#signals">Signal types</a></li>
       <li class="toc-item"><a href="#detection">Detection pipeline</a></li>
+      <li class="toc-item"><a href="#factcheck">Fact-checking</a></li>
       <li class="toc-item"><a href="#scoring">Scoring model</a></li>
       <li class="toc-item"><a href="#tiers">Certainty tiers</a></li>
       <li class="toc-item"><a href="#architecture">Architecture</a></li>
@@ -330,7 +331,7 @@
     <section class="doc-section" id="overview">
       <h2>Overview</h2>
       <p>
-        InCite operates as a Chrome extension that intercepts Claude's responses as they stream into the page. Each sentence is sent to a signal analysis pipeline — a combination of deterministic pattern matching and a lightweight LLM call — that scores the sentence across nine risk dimensions. The result is a colored underline directly in Claude's UI, with a tooltip that breaks down exactly which signals fired and why.
+        InCite operates as a Chrome extension that intercepts Claude's responses as they stream into the page. Each sentence is sent to a signal analysis pipeline — a combination of deterministic pattern matching and a lightweight LLM call — that scores the sentence across nine risk dimensions. The result is a colored underline directly in Claude's UI, with a tooltip that breaks down exactly which signals fired and why. For citation, medical, and legal signals, a live Perplexity search can be triggered directly from the tooltip to fact-check the specific claim against real sources.
       </p>
       <p>
         The core insight is that <strong>AI hallucinations are not random</strong>. They cluster around specific linguistic and structural patterns: citations to studies that may not exist, specific statistics attributed to named organisations, medical dosages that sound plausible but are subtly wrong, legal statutes that are slightly misquoted. InCite targets these patterns specifically rather than trying to fact-check every sentence.
@@ -451,6 +452,30 @@
       </p>
     </section>
 
+    <!-- Fact-checking -->
+    <section class="doc-section" id="factcheck">
+      <h2>Fact-checking</h2>
+      <p>
+        For signals where a live source check adds meaningful value — <strong>citation</strong>, <strong>medical</strong>, and <strong>legal</strong> — InCite exposes a <em>Live check (Perplexity)</em> option inside the Verify dropdown on each signal card in the Advanced view. Clicking it sends the flagged sentence to the Perplexity <code>sonar</code> model, which searches the web in real time and returns a structured verdict.
+      </p>
+
+      <h3>Verdict taxonomy</h3>
+      <p>The system prompt instructs the model to apply verdicts in strict order of precedence:</p>
+      <ul style="margin: 10px 0 16px 20px; display:flex; flex-direction:column; gap:8px; font-size:15px; color: var(--text-muted); line-height:1.6;">
+        <li><strong style="color:var(--text)">Contradicted</strong> — a named citation cannot be found, a specific number differs from what real sources report, or real sources directly state the opposite. A sentence that mixes correct general facts with a fabricated specific detail (wrong number, non-existent paper) is contradicted, not unverifiable.</li>
+        <li><strong style="color:var(--text)">Supported</strong> — the specific claim as stated, including any numbers, names, and citations, is confirmed by real sources.</li>
+        <li><strong style="color:var(--text)">Unverifiable</strong> — reserved for topics where no evidence exists either way: too obscure, too recent, or not yet indexed.</li>
+      </ul>
+
+      <p>
+        The result renders inline inside the signal card that triggered it, tinted with the card's own signal color. Each result includes a one-sentence verdict reason naming the specific detail that is confirmed or wrong, and up to three clickable source links with snippets.
+      </p>
+
+      <div class="callout">
+        <strong>Cost note:</strong> Each Perplexity check is a paid API call against the user's Perplexity API key. Checks are on-demand only — InCite never triggers them automatically.
+      </div>
+    </section>
+
     <!-- Scoring model -->
     <section class="doc-section" id="scoring">
       <h2>Scoring model</h2>
@@ -526,12 +551,17 @@
         <div class="arch-arrow">→</div>
         <div class="arch-node">
           <div class="arch-node-title">Signal API</div>
-          <div class="arch-node-desc">Express server runs regex phase 1, calls Claude Haiku for phase 2, returns scored segments</div>
+          <div class="arch-node-desc">Express server runs regex phase 1, calls Claude Haiku for phase 2, proxies Perplexity fact-checks, returns scored segments</div>
         </div>
         <div class="arch-arrow">→</div>
         <div class="arch-node">
           <div class="arch-node-title">Claude Haiku</div>
           <div class="arch-node-desc">Lightweight model call for semantic signal scoring — fast and cost-efficient per sentence</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node">
+          <div class="arch-node-title">Perplexity sonar</div>
+          <div class="arch-node-desc">On-demand live web search for citation, medical, and legal fact-checks — returns verdict + sources</div>
         </div>
       </div>
 
