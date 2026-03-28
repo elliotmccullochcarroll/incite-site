@@ -417,7 +417,6 @@
     .demo-toggle-btn.off::after { left: 3px; }
     /* When InCite is off, hide underlines and tooltip */
     .incite-off .demo-flag {
-      text-decoration: none !important;
       background-size: 0% 2px !important;
       cursor: default;
     }
@@ -595,22 +594,26 @@
     }
 
     /* Underlines */
-    .u-low, .u-med, .u-info {
-      text-decoration-thickness: 2px;
-      text-underline-offset: 3px;
+    /* Underlines drawn in via background-size animation */
+    .demo-flag {
       cursor: pointer;
       border-radius: 2px;
-      transition: background 0.12s;
+      background-repeat: no-repeat;
+      background-position: 0 calc(100% + 1px);
+      background-size: 0% 2px;
+      transition: background-size 0.55s ease, background-color 0.12s;
+      padding-bottom: 1px;
     }
-    .u-low  { text-decoration: underline; text-decoration-color: #D96860; }
-    .u-med  { text-decoration: underline; text-decoration-color: #C87840; }
-    .u-info { text-decoration: underline; text-decoration-color: #8AAE50; }
-    .u-low:hover  { background: rgba(217,104,96,0.10); }
-    .u-med:hover  { background: rgba(200,120,64,0.10); }
-    .u-info:hover { background: rgba(138,174,80,0.10); }
-    .demo-flag-active.u-low  { background: rgba(217,104,96,0.14); }
-    .demo-flag-active.u-med  { background: rgba(200,120,64,0.14); }
-    .demo-flag-active.u-info { background: rgba(138,174,80,0.14); }
+    .u-low  { background-image: linear-gradient(#D96860, #D96860); }
+    .u-med  { background-image: linear-gradient(#C87840, #C87840); }
+    .u-info { background-image: linear-gradient(#8AAE50, #8AAE50); }
+    .demo-flag.drawn { background-size: 100% 2px; }
+    .u-low:hover  { background-color: rgba(217,104,96,0.10); }
+    .u-med:hover  { background-color: rgba(200,120,64,0.10); }
+    .u-info:hover { background-color: rgba(138,174,80,0.10); }
+    .demo-flag-active.u-low  { background-color: rgba(217,104,96,0.14); }
+    .demo-flag-active.u-med  { background-color: rgba(200,120,64,0.14); }
+    .demo-flag-active.u-info { background-color: rgba(138,174,80,0.14); }
 
     /* Right column — wraps the floating tooltip */
     .mock-right-col {
@@ -946,6 +949,20 @@
 
     let activeFlag = null;
 
+    // Underline draw-in on scroll into view
+    let underlinesDrawn = false;
+    const flags = Array.from(document.querySelectorAll(".demo-flag"));
+    const drawObserver = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && !underlinesDrawn) {
+        underlinesDrawn = true;
+        flags.forEach((el, i) => {
+          setTimeout(() => el.classList.add("drawn"), i * 500);
+        });
+        drawObserver.disconnect();
+      }
+    }, { threshold: 0.5 });
+    drawObserver.observe(document.querySelector(".mock-browser"));
+
     // Before/After toggle
     const demoToggle   = document.getElementById("demoToggle");
     const mockBodyWrap = document.querySelector(".mock-body");
@@ -962,6 +979,10 @@
       if (!inciteOn) {
         document.querySelectorAll(".demo-flag").forEach(f => f.classList.remove("demo-flag-active"));
         activeFlag = null;
+      } else if (underlinesDrawn) {
+        // Re-animate underlines when toggled back on
+        flags.forEach(f => f.classList.remove("drawn"));
+        flags.forEach((f, i) => setTimeout(() => f.classList.add("drawn"), i * 400));
       }
     });
 
