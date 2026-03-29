@@ -126,15 +126,7 @@
     }
     .hero h1 em.drawn { background-size: 100% 3px; }
 
-    .hero-compat {
-      font-size: 12px;
-      color: var(--faint);
-      margin-top: 16px;
-      margin-bottom: 0;
-      font-weight: 400;
-    }
-    .hero-compat strong { color: var(--muted); font-weight: 500; }
-    .hero-sub {
+.hero-sub {
       font-size: 18px;
       line-height: 1.7;
       color: var(--muted);
@@ -220,46 +212,69 @@
     }
 
     /* ── Steps ── */
+    .steps-wrap { position: relative; }
+    .steps-line {
+      position: absolute;
+      top: 26px;
+      left: calc(12.5%);
+      right: calc(12.5%);
+      height: 1px;
+      background: var(--border);
+      z-index: 0;
+    }
     .steps {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 2px;
-      background: var(--border);
-      border-radius: 18px;
-      overflow: hidden;
+      gap: 0;
+      position: relative;
+      z-index: 1;
     }
-    @media (max-width: 768px) { .steps { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 768px) {
+      .steps { grid-template-columns: 1fr 1fr; gap: 0; }
+      .steps-line { display: none; }
+    }
     @media (max-width: 480px) { .steps { grid-template-columns: 1fr; } }
 
-    .step {
+    .step { padding: 0 20px; text-align: center; }
+
+    .step-outer {
+      width: 52px; height: 52px; border-radius: 50%;
+      border: 2px solid transparent;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 22px;
+      transition: border-color 0.2s;
+    }
+    .step-inner {
+      width: 38px; height: 38px; border-radius: 50%;
       background: var(--bg-card);
-      padding: 0 28px 28px;
-      transition: background 0.15s;
+      border: 1.5px solid transparent;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
     }
-    .step:hover { background: #FDFCFA; }
-    .step:hover .step-bar { background: var(--accent); }
-    .step-bar {
-      height: 3px;
-      background: var(--border);
-      margin: 0 -28px 24px;
-      transition: background 0.2s;
-    }
-    .step-icon {
-      font-size: 20px;
-      margin-bottom: 14px;
-      display: block;
-    }
-    .step h3 {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 7px;
-    }
-    .step p {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.65;
-    }
+
+    .step:nth-child(1) .step-outer { border-color: rgba(144,104,200,0.20); }
+    .step:nth-child(2) .step-outer { border-color: rgba(78,144,184,0.20); }
+    .step:nth-child(3) .step-outer { border-color: rgba(78,158,104,0.20); }
+    .step:nth-child(4) .step-outer { border-color: rgba(196,94,42,0.20); }
+
+    .step:nth-child(1) .step-inner { color: #9068C8; border-color: rgba(144,104,200,0.30); }
+    .step:nth-child(2) .step-inner { color: #4E90B8; border-color: rgba(78,144,184,0.30); }
+    .step:nth-child(3) .step-inner { color: #4E9E68; border-color: rgba(78,158,104,0.30); }
+    .step:nth-child(4) .step-inner { color: var(--accent); border-color: rgba(196,94,42,0.30); }
+
+    .step:nth-child(1):hover .step-outer { border-color: rgba(144,104,200,0.45); }
+    .step:nth-child(2):hover .step-outer { border-color: rgba(78,144,184,0.45); }
+    .step:nth-child(3):hover .step-outer { border-color: rgba(78,158,104,0.45); }
+    .step:nth-child(4):hover .step-outer { border-color: rgba(196,94,42,0.45); }
+
+    .step:nth-child(1):hover .step-inner { background: #9068C8; border-color: #9068C8; color: #fff; }
+    .step:nth-child(2):hover .step-inner { background: #4E90B8; border-color: #4E90B8; color: #fff; }
+    .step:nth-child(3):hover .step-inner { background: #4E9E68; border-color: #4E9E68; color: #fff; }
+    .step:nth-child(4):hover .step-inner { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    .step h3 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .step p { font-size: 13px; color: var(--muted); line-height: 1.65; }
 
     /* ── Signals ── */
     .signals-grid {
@@ -985,7 +1000,6 @@
       <a class="btn-primary" href="incite.zip" download>↓ &nbsp;Download InCite</a>
       <a class="btn-secondary" href="#demo">See how it works</a>
     </div>
-    <p class="hero-compat">Currently works with <strong>Claude.ai</strong> · More platforms coming soon</p>
   </section>
 
   <!-- Demo -->
@@ -1215,30 +1229,29 @@
     <h2>Uncertainty, made visible.</h2>
     <p class="section-sub">Every sentence Claude generates is scored against signals that predict where AI goes wrong most often.</p>
 
-    <div class="steps">
-      <div class="step">
-        <div class="step-bar"></div>
-        <span class="step-icon">🔍</span>
-        <h3>Detects signals</h3>
-        <p>Pattern matching and a background AI check scan each sentence for high-risk structures.</p>
-      </div>
-      <div class="step">
-        <div class="step-bar"></div>
-        <span class="step-icon">〰</span>
-        <h3>Underlines risk</h3>
-        <p>Flagged sentences are underlined directly in Claude's UI — no separate window, no copy-paste.</p>
-      </div>
-      <div class="step">
-        <div class="step-bar"></div>
-        <span class="step-icon">↗</span>
-        <h3>Points to sources</h3>
-        <p>Each signal links to the right place — PubMed for medical, Scholar for citations, Justia for legal.</p>
-      </div>
-      <div class="step">
-        <div class="step-bar"></div>
-        <span class="step-icon">✓</span>
-        <h3>You decide</h3>
-        <p>Resolve signals you've checked. The score updates live so you know what's left to verify.</p>
+    <div class="steps-wrap">
+      <div class="steps-line"></div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-outer"><div class="step-inner">◎</div></div>
+          <h3>Detects signals</h3>
+          <p>Pattern matching and a background AI check scan each sentence for high-risk structures.</p>
+        </div>
+        <div class="step">
+          <div class="step-outer"><div class="step-inner">〜</div></div>
+          <h3>Underlines risk</h3>
+          <p>Flagged sentences are underlined directly in Claude's UI — no separate window, no copy-paste.</p>
+        </div>
+        <div class="step">
+          <div class="step-outer"><div class="step-inner">↗</div></div>
+          <h3>Points to sources</h3>
+          <p>Each signal links to the right place — PubMed for medical, Scholar for citations, Justia for legal.</p>
+        </div>
+        <div class="step">
+          <div class="step-outer"><div class="step-inner">✓</div></div>
+          <h3>You decide</h3>
+          <p>Resolve signals you've checked. The score updates live so you know what's left to verify.</p>
+        </div>
       </div>
     </div>
   </section>
