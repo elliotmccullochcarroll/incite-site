@@ -1196,20 +1196,23 @@
       },
       {
         verdict: "Flag: moderate", verdictClass: "verdict-medium",
-        summary: "Flagged for <span class='mock-chip' style='color:#4E90B8'>medical</span> dosage information.",
+        summary: "Flagged for <span class='mock-chip' style='color:#4E90B8'>medical</span> dosage and <span class='mock-chip' style='color:#C0A040'>factual claims</span>.",
         signals: [
-          { name: "Medical", color: "#4E90B8", desc: "Specific drug dosage and titration schedule — verify with a prescriber before acting." },
+          { name: "Medical",        color: "#4E90B8", desc: "Specific drug dosage and titration schedule — verify with a prescriber before acting." },
+          { name: "Factual claims", color: "#C0A040", desc: "Specific mg values (0.25 mg, 0.5 mg, 2 mg) are precise claims that vary by formulation and guideline — confirm against current prescribing information." },
         ],
         multiplier: null,
         advSignals: [
           { name: "Medical claims", color: "#4E90B8", pct: 78, expl: "Specific drug dosage and titration schedule. Dosing protocols vary by indication and patient profile — verify with a prescriber or official drug reference before acting on this.", verify: "PubMed" },
+          { name: "Factual claims", color: "#C0A040", pct: 52, expl: "Specific mg values (0.25 mg, 0.5 mg, 2 mg) are precise factual claims. Dosage figures vary by formulation, indication, and updated clinical guidelines.", verify: null },
         ]
       },
       {
         verdict: "Flag: minor", verdictClass: "verdict-info",
-        summary: "Flagged for a <span class='mock-chip' style='color:#8AAE50'>temporal</span> claim.",
+        summary: "Flagged for a <span class='mock-chip' style='color:#8AAE50'>temporal</span> claim and <span class='mock-chip' style='color:#C0A040'>factual claims</span>.",
         signals: [
-          { name: "Temporal", color: "#8AAE50", desc: "\"As of early 2024\" — prescribing trends may have shifted since the model's training cutoff." },
+          { name: "Temporal",       color: "#8AAE50", desc: "\"As of early 2024\" — prescribing trends may have shifted since the model's training cutoff." },
+          { name: "Factual claims", color: "#C0A040", desc: "Ranks semaglutide as among the most widely prescribed GLP-1 agonists globally — a specific comparative claim that may have changed." },
         ],
         multiplier: null,
         advSignals: [
@@ -1408,7 +1411,7 @@
         <div class="step">
           <div class="step-outer"><div class="step-inner">↗</div></div>
           <h3>Points to sources</h3>
-          <p>Each signal links to the right place — PubMed for medical, Scholar for citations, Justia for legal.</p>
+          <p>Each signal routes you to the right source — specialist databases for medical and legal, academic indexes for citations, and live web search for anything that needs a current answer.</p>
         </div>
         <div class="step">
           <div class="step-outer"><div class="step-inner">✓</div></div>
