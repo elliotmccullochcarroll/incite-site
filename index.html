@@ -1375,9 +1375,8 @@
     flags.forEach(el => {
       el.addEventListener("click", (e) => {
         e.stopPropagation();
-        const idx = parseInt(el.dataset.flag);
-        if (activeFlag === idx) { closeTooltip(); return; }
-        openTooltip(el, idx);
+        if (activeFlag !== null) return;
+        openTooltip(el, parseInt(el.dataset.flag));
       });
     });
 
