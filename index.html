@@ -1181,11 +1181,11 @@
     const FLAGS = [
       {
         verdict: "Flag: high risk", verdictClass: "verdict-low",
-        summary: "Flagged for <span class='mock-chip' style='color:#9068C8'>citations</span>, <span class='mock-chip' style='color:#4E90B8'>medical</span>, and <span class='mock-chip' style='color:#6070C0'>entity stats</span>.",
+        summary: "Flagged for <span class='mock-chip' style='color:#9068C8'>citation risk</span>, <span class='mock-chip' style='color:#4E90B8'>medical claims</span>, and <span class='mock-chip' style='color:#6070C0'>entity statistics</span>.",
         signals: [
-          { name: "Citations",    color: "#9068C8", desc: "Named author + journal — AI models frequently confuse or fabricate citation details." },
-          { name: "Medical",      color: "#4E90B8", desc: "Clinical efficacy stat with a specific patient count and outcome percentage." },
-          { name: "Entity stats", color: "#6070C0", desc: "Precise figure (14.9%) attributed to a named study — verify against the primary source." },
+          { name: "Citation risk",     color: "#9068C8", desc: "Named author + journal — AI models frequently confuse or fabricate citation details." },
+          { name: "Medical claims",    color: "#4E90B8", desc: "Clinical efficacy stat with a specific patient count and outcome percentage." },
+          { name: "Entity statistics", color: "#6070C0", desc: "Precise figure (14.9%) attributed to a named study — verify against the primary source." },
         ],
         multiplier: { title: "Multiple high-risk signals", body: "Three high-risk signals co-fired. Treat every specific claim in this sentence as unverified before acting on it." },
         advSignals: [
@@ -1196,9 +1196,9 @@
       },
       {
         verdict: "Flag: moderate", verdictClass: "verdict-medium",
-        summary: "Flagged for <span class='mock-chip' style='color:#4E90B8'>medical</span> dosage and <span class='mock-chip' style='color:#C0A040'>factual claims</span>.",
+        summary: "Flagged for <span class='mock-chip' style='color:#4E90B8'>medical claims</span> and <span class='mock-chip' style='color:#C0A040'>factual claims</span>.",
         signals: [
-          { name: "Medical",        color: "#4E90B8", desc: "Specific drug dosage and titration schedule — verify with a prescriber before acting." },
+          { name: "Medical claims", color: "#4E90B8", desc: "Specific drug dosage and titration schedule — verify with a prescriber before acting." },
           { name: "Factual claims", color: "#C0A040", desc: "Specific mg values (0.25 mg, 0.5 mg, 2 mg) are precise claims that vary by formulation and guideline — confirm against current prescribing information." },
         ],
         multiplier: null,
@@ -1209,9 +1209,9 @@
       },
       {
         verdict: "Flag: minor", verdictClass: "verdict-info",
-        summary: "Flagged for a <span class='mock-chip' style='color:#8AAE50'>temporal</span> claim and <span class='mock-chip' style='color:#C0A040'>factual claims</span>.",
+        summary: "Flagged for <span class='mock-chip' style='color:#8AAE50'>temporal staleness</span> and <span class='mock-chip' style='color:#C0A040'>factual claims</span>.",
         signals: [
-          { name: "Temporal",       color: "#8AAE50", desc: "\"As of early 2024\" — prescribing trends may have shifted since the model's training cutoff." },
+          { name: "Temporal staleness", color: "#8AAE50", desc: "\"As of early 2024\" — prescribing trends may have shifted since the model's training cutoff." },
           { name: "Factual claims", color: "#C0A040", desc: "Ranks semaglutide as among the most widely prescribed GLP-1 agonists globally — a specific comparative claim that may have changed." },
         ],
         multiplier: null,
