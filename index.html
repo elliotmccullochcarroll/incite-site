@@ -848,6 +848,69 @@
       font-family: "Inter", sans-serif;
     }
 
+    /* Advanced tab cards */
+    .mock-adv-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.8px; color: rgba(255,255,255,0.25);
+      padding: 10px 14px 6px; display: block;
+    }
+    .mock-adv-cards { display: flex; flex-direction: column; gap: 5px; padding: 0 12px 10px; }
+    .mock-adv-card {
+      border-radius: 8px;
+      border-left: 3px solid transparent;
+      background: rgba(255,255,255,0.04);
+    }
+    .mock-adv-card-hdr { padding: 9px 10px 7px; }
+    .mock-adv-title-row { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; }
+    .mock-adv-name { font-size: 12px; font-weight: 700; flex: 0 0 auto; }
+    .mock-adv-bar-wrap { flex: 1; height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+    .mock-adv-bar-fill { height: 100%; border-radius: 2px; }
+    .mock-adv-pct { font-size: 11px; font-weight: 700; flex: 0 0 auto; }
+    .mock-adv-verify-row {
+      display: flex; align-items: center; justify-content: flex-end;
+      padding: 0 0 4px;
+    }
+    .mock-adv-verify-btn {
+      font-size: 10.5px; font-weight: 500;
+      color: rgba(255,255,255,0.30);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 5px; padding: 3px 8px;
+      cursor: default; font-family: "Inter", sans-serif;
+    }
+    .mock-adv-expl {
+      font-size: 11.5px; color: #9A8E82;
+      padding: 0 10px 8px; line-height: 1.55;
+    }
+    .mock-adv-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 10px 7px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .mock-adv-resolve-label { font-size: 10.5px; color: rgba(255,255,255,0.22); }
+    .mock-adv-resolve-btn {
+      font-size: 11px; color: rgba(255,255,255,0.30);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 5px; padding: 2px 9px;
+      cursor: default; font-family: "Inter", sans-serif;
+    }
+    .mock-multiplier {
+      margin: 8px 12px 4px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 7px;
+    }
+    .mock-multiplier-hdr {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 10px;
+      font-size: 12px; font-weight: 600;
+      color: rgba(255,255,255,0.65);
+    }
+    .mock-multiplier-body {
+      font-size: 11.5px; color: #9A8E82;
+      padding: 0 10px 9px; line-height: 1.55;
+    }
+
     @media (max-width: 680px) {
       .mock-tt { width: calc(100% - 32px); }
     }
@@ -1099,8 +1162,8 @@
             <span class="mock-tt-verdict" id="mockVerdict"></span>
           </div>
           <div class="mock-tt-tabs">
-            <div class="mock-tt-tab active">Simple</div>
-            <div class="mock-tt-tab">Advanced</div>
+            <div class="mock-tt-tab active" data-tab="simple">Simple</div>
+            <div class="mock-tt-tab" data-tab="advanced">Advanced</div>
           </div>
           <div id="mockBody"></div>
           <div class="mock-tt-footer">
@@ -1122,6 +1185,12 @@
           { name: "Citations",    color: "#9068C8", desc: "Named author + journal — AI models frequently confuse or fabricate citation details." },
           { name: "Medical",      color: "#4E90B8", desc: "Clinical efficacy stat with a specific patient count and outcome percentage." },
           { name: "Entity stats", color: "#6070C0", desc: "Precise figure (14.9%) attributed to a named study — verify against the primary source." },
+        ],
+        multiplier: { title: "Multiple high-risk signals", body: "Three high-risk signals co-fired. Treat every specific claim in this sentence as unverified before acting on it." },
+        advSignals: [
+          { name: "Citation risk",     color: "#9068C8", pct: 85, expl: "Names a specific author, journal, and year. AI models frequently confuse or fabricate citation details — the study may not exist or the figures may differ.", verify: "Scholar" },
+          { name: "Medical claims",    color: "#4E90B8", pct: 72, expl: "Clinical efficacy stat with a named patient count and specific outcome percentage. Verify the figure against the published abstract before citing.", verify: "PubMed" },
+          { name: "Entity statistics", color: "#6070C0", pct: 68, expl: "Precise figure (14.9%) attributed to a named trial. High hallucination risk for specific statistics tied to named entities.", verify: null },
         ]
       },
       {
@@ -1129,6 +1198,10 @@
         summary: "Flagged for <span class='mock-chip' style='color:#4E90B8'>medical</span> dosage information.",
         signals: [
           { name: "Medical", color: "#4E90B8", desc: "Specific drug dosage and titration schedule — verify with a prescriber before acting." },
+        ],
+        multiplier: null,
+        advSignals: [
+          { name: "Medical claims", color: "#4E90B8", pct: 78, expl: "Specific drug dosage and titration schedule. Dosing protocols vary by indication and patient profile — verify with a prescriber or official drug reference before acting on this.", verify: "PubMed" },
         ]
       },
       {
@@ -1136,6 +1209,11 @@
         summary: "Flagged for a <span class='mock-chip' style='color:#8AAE50'>temporal</span> claim.",
         signals: [
           { name: "Temporal", color: "#8AAE50", desc: "\"As of early 2024\" — prescribing trends may have shifted since the model's training cutoff." },
+        ],
+        multiplier: null,
+        advSignals: [
+          { name: "Temporal staleness", color: "#8AAE50", pct: 44, expl: "\"As of early 2024\" — prescribing trends shift quickly. Claude's knowledge cutoff means this may not reflect current clinical practice.", verify: null },
+          { name: "Factual claims",     color: "#C0A040", pct: 38, expl: "Ranks semaglutide as among the most widely prescribed GLP-1 agonists globally — a specific comparative claim that may have changed.", verify: null },
         ]
       }
     ];
@@ -1177,25 +1255,62 @@
       const body    = document.getElementById("mockBody");
       verdict.textContent = f.verdict;
       verdict.className   = "mock-tt-verdict " + f.verdictClass;
-      body.innerHTML = `
-        <div class="mock-tt-why">
-          <div class="mock-tt-why-label">Why flagged</div>
-          <div class="mock-tt-why-text">${f.summary}</div>
-        </div>
-        <div class="mock-tt-accordions">
-          ${f.signals.map((s, i) => `
-            <div class="mock-tt-row" style="animation-delay:${i * 0.06}s" data-i="${i}">
-              <div class="mock-tt-row-hdr" style="border-left-color:${s.color}">
-                <span class="mock-tt-row-label" style="color:${s.color}">${s.name}</span>
-                <span class="mock-tt-chevron">›</span>
+
+      if (activeTab === "simple") {
+        body.innerHTML = `
+          <div class="mock-tt-why">
+            <div class="mock-tt-why-label">Why flagged</div>
+            <div class="mock-tt-why-text">${f.summary}</div>
+          </div>
+          <div class="mock-tt-accordions">
+            ${f.signals.map((s, i) => `
+              <div class="mock-tt-row" style="animation-delay:${i * 0.06}s" data-i="${i}">
+                <div class="mock-tt-row-hdr" style="border-left-color:${s.color}">
+                  <span class="mock-tt-row-label" style="color:${s.color}">${s.name}</span>
+                  <span class="mock-tt-chevron">›</span>
+                </div>
+                <div class="mock-tt-row-body">${s.desc}</div>
+              </div>`).join("")}
+          </div>`;
+        setTimeout(() => {
+          const first = body.querySelector(".mock-tt-row");
+          if (first) first.classList.add("open");
+        }, 220);
+
+      } else {
+        const multiplierHtml = f.multiplier ? `
+          <div class="mock-multiplier">
+            <div class="mock-multiplier-hdr">
+              <span>⚡ ${f.multiplier.title}</span>
+              <span style="color:rgba(255,255,255,0.20);font-size:13px">›</span>
+            </div>
+            <div class="mock-multiplier-body">${f.multiplier.body}</div>
+          </div>` : "";
+
+        const cards = f.advSignals.map((s, i) => `
+          <div class="mock-adv-card" style="border-left-color:${s.color};animation:fadeUp 0.18s ease ${i*0.07}s forwards;opacity:0">
+            <div class="mock-adv-card-hdr">
+              <div class="mock-adv-title-row">
+                <span class="mock-adv-name" style="color:${s.color}">${s.name}</span>
+                <div class="mock-adv-bar-wrap">
+                  <div class="mock-adv-bar-fill" style="width:${s.pct}%;background:${s.color}"></div>
+                </div>
+                <span class="mock-adv-pct" style="color:${s.color}">${s.pct}%</span>
               </div>
-              <div class="mock-tt-row-body">${s.desc}</div>
-            </div>`).join("")}
-        </div>`;
-      setTimeout(() => {
-        const first = body.querySelector(".mock-tt-row");
-        if (first) first.classList.add("open");
-      }, 220);
+              ${s.verify ? `<div class="mock-adv-verify-row"><button class="mock-adv-verify-btn">Verify ↗</button></div>` : ""}
+            </div>
+            <div class="mock-adv-expl">${s.expl}</div>
+            <div class="mock-adv-footer">
+              <span class="mock-adv-resolve-label">Resolve</span>
+              <button class="mock-adv-resolve-btn">✓</button>
+            </div>
+          </div>`).join("");
+
+        body.innerHTML = `
+          ${multiplierHtml}
+          <span class="mock-adv-label">Signal breakdown</span>
+          <div class="mock-adv-cards">${cards}</div>`;
+      }
     }
 
     function positionTooltip(anchorEl) {
@@ -1220,6 +1335,20 @@
 
     // Click handlers — user-driven interaction
     let activeFlag = null;
+    let activeTab  = "simple";
+
+    function setTab(tab) {
+      activeTab = tab;
+      document.querySelectorAll(".mock-tt-tab").forEach(t => {
+        t.classList.toggle("active", t.dataset.tab === tab);
+      });
+      if (activeFlag !== null) renderPanel(activeFlag);
+    }
+
+    document.getElementById("mockTT").addEventListener("click", e => {
+      const tab = e.target.closest(".mock-tt-tab");
+      if (tab) setTab(tab.dataset.tab);
+    });
 
     function openTooltip(el, idx) {
       flags.forEach(f => f.classList.remove("demo-flag-active"));
