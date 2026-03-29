@@ -39,7 +39,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 22px 56px;
-      background: rgba(247,244,240,0.85);
+      background: rgba(247,244,240,0.88);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       position: sticky;
@@ -48,43 +48,18 @@
       border-bottom: 1px solid var(--border);
     }
     .nav-logo {
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: -0.4px;
-      color: var(--text);
+      display: flex; align-items: center; gap: 9px;
       text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 9px;
     }
-    .nav-logo span { color: var(--accent); }
-    .nav-logo img {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      flex-shrink: 0;
-    }
-    .nav-right { display: flex; align-items: center; gap: 32px; }
+    .nav-logo img { width: 32px; height: 32px; border-radius: 8px; }
+    .nav-right { display: flex; align-items: center; gap: 28px; }
     .nav-link {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--muted);
-      text-decoration: none;
+      font-size: 13px; font-weight: 500;
+      color: var(--muted); text-decoration: none;
       transition: color 0.15s;
     }
     .nav-link:hover { color: var(--text); }
-    .nav-link.active { color: var(--text); font-weight: 500; }
-    .nav-cta {
-      font-size: 13px;
-      font-weight: 600;
-      color: #fff;
-      background: var(--accent);
-      padding: 8px 18px;
-      border-radius: 8px;
-      text-decoration: none;
-      transition: background 0.15s;
-    }
-    .nav-cta:hover { background: #B35525; }
+    .nav-link.active { color: var(--accent); }
 
     /* ── Hero ── */
     .hero {
@@ -1079,7 +1054,7 @@
     <div class="nav-right">
       <a class="nav-link active" href="index.html">Home</a>
       <a class="nav-link" href="how-it-works.html">Methodology</a>
-      <a class="nav-cta" href="#install">Install</a>
+      <a class="nav-link" href="#install">Install</a>
     </div>
   </nav>
 
