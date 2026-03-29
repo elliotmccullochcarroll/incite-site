@@ -869,15 +869,8 @@
       background: rgba(255,255,255,0.04);
     }
     .mock-adv-card-hdr { padding: 9px 10px 7px; }
-    .mock-adv-title-row { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; }
-    .mock-adv-name { font-size: 12px; font-weight: 700; flex: 0 0 auto; }
-    .mock-adv-bar-wrap { flex: 1; height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
-    .mock-adv-bar-fill { height: 100%; border-radius: 2px; }
-    .mock-adv-pct { font-size: 11px; font-weight: 700; flex: 0 0 auto; }
-    .mock-adv-verify-row {
-      display: flex; align-items: center; justify-content: flex-end;
-      padding: 0 0 4px;
-    }
+    .mock-adv-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .mock-adv-name { font-size: 12px; font-weight: 700; }
     .mock-adv-verify-btn {
       font-size: 10.5px; font-weight: 500;
       color: rgba(255,255,255,0.30);
@@ -1300,12 +1293,8 @@
             <div class="mock-adv-card-hdr">
               <div class="mock-adv-title-row">
                 <span class="mock-adv-name" style="color:${s.color}">${s.name}</span>
-                <div class="mock-adv-bar-wrap">
-                  <div class="mock-adv-bar-fill" style="width:${s.pct}%;background:${s.color}"></div>
-                </div>
-                <span class="mock-adv-pct" style="color:${s.color}">${s.pct}%</span>
+                ${s.verify ? `<button class="mock-adv-verify-btn">Verify ↗</button>` : ""}
               </div>
-              ${s.verify ? `<div class="mock-adv-verify-row"><button class="mock-adv-verify-btn">Verify ↗</button></div>` : ""}
             </div>
             <div class="mock-adv-expl">${s.expl}</div>
             <div class="mock-adv-footer">
