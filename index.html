@@ -212,6 +212,13 @@
     }
 
     /* ── Steps ── */
+    .steps-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px 40px 44px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.04);
+    }
     .steps-wrap { position: relative; }
     .steps-line {
       position: absolute;
@@ -246,7 +253,7 @@
     }
     .step-inner {
       width: 38px; height: 38px; border-radius: 50%;
-      background: var(--bg-card);
+      background: var(--bg);
       border: 1.5px solid transparent;
       display: flex; align-items: center; justify-content: center;
       font-size: 18px;
@@ -1229,6 +1236,7 @@
     <h2>Uncertainty, made visible.</h2>
     <p class="section-sub">Every sentence Claude generates is scored against signals that predict where AI goes wrong most often.</p>
 
+    <div class="steps-card">
     <div class="steps-wrap">
       <div class="steps-line"></div>
       <div class="steps">
@@ -1253,6 +1261,7 @@
           <p>Resolve signals you've checked. The score updates live so you know what's left to verify.</p>
         </div>
       </div>
+    </div>
     </div>
   </section>
 
