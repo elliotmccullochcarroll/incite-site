@@ -134,11 +134,11 @@
       stroke-width: 2.5;
       stroke-linecap: round;
       vector-effect: non-scaling-stroke;
-      stroke-dasharray: 1;
-      stroke-dashoffset: 1;
+      stroke-dasharray: 600;
+      stroke-dashoffset: 600;
     }
     @keyframes drawUnderline {
-      from { stroke-dashoffset: 1; }
+      from { stroke-dashoffset: 600; }
       to   { stroke-dashoffset: 0; }
     }
     .hero h1 em.drawn path {
@@ -770,6 +770,7 @@
       text-align: center;
       color: rgba(255,255,255,0.30);
       border-bottom: 2px solid transparent;
+      cursor: pointer;
       cursor: default;
     }
     .mock-tt-tab.active {
@@ -1090,7 +1091,7 @@
 
   <!-- Hero -->
   <section class="hero">
-    <h1>Use AI with confidence.<br><em>Not blind faith.<svg viewBox="0 0 300 10" preserveAspectRatio="none"><path d="M2,7 C75,3 150,9 298,6" pathLength="1"/></svg></em></h1>
+    <h1>Use AI with confidence.<br><em>Not blind faith.<svg viewBox="0 0 300 10" preserveAspectRatio="none"><path d="M2,7 C75,3 150,9 298,6"/></svg></em></h1>
     <p class="hero-sub">
       Flags uncertainty. Validates citations. Points you to proof — all without leaving Claude.
     </p>
