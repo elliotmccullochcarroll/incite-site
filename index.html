@@ -1371,6 +1371,7 @@
     function closeTooltip() {
       flags.forEach(f => f.classList.remove("demo-flag-active"));
       document.getElementById("mockTT").classList.remove("visible");
+      document.querySelector(".demo-frame").classList.remove("tt-hover");
       activeFlag = null;
     }
 
