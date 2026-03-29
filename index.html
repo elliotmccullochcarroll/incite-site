@@ -432,6 +432,15 @@
       margin-top: 1px;
     }
 
+    .sub-click-hint {
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-style: dotted;
+      text-decoration-thickness: 1.5px;
+      text-decoration-color: var(--muted);
+    }
+
     /* ── Demo ── */
     .demo-section {
       background: #E8E4DE;
@@ -1014,7 +1023,7 @@
     <div class="demo-inner">
       <p class="section-label">Live preview</p>
       <h2>See it in action.</h2>
-      <p class="section-sub">Each underlined sentence has been flagged for review. Click one to see why.</p>
+      <p class="section-sub">Each underlined sentence has been flagged for review. <span class="sub-click-hint">Click one</span> to see why.</p>
 
       <div class="demo-frame">
       <div class="mock-browser">
