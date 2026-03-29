@@ -713,6 +713,7 @@
     .demo-flag-active.u-low  { background-color: rgba(217,104,96,0.14); }
     .demo-flag-active.u-med  { background-color: rgba(200,120,64,0.14); }
     .demo-flag-active.u-info { background-color: rgba(138,174,80,0.14); }
+    .tt-hover .demo-flag { pointer-events: none; }
 
     /* Right column — wraps the floating tooltip */
     /* Floating tooltip — anchored to the right of the frame, overlays chat (mirrors real extension) */
@@ -1376,10 +1377,17 @@
     flags.forEach(el => {
       el.addEventListener("click", (e) => {
         e.stopPropagation();
-        if (activeFlag !== null) return;
-        openTooltip(el, parseInt(el.dataset.flag));
+        const idx = parseInt(el.dataset.flag);
+        if (activeFlag === idx) { closeTooltip(); return; }
+        openTooltip(el, idx);
       });
     });
+
+    // Disable flag hover + clicks while cursor is inside the popup
+    const mockTT = document.getElementById("mockTT");
+    const demoFrame = document.querySelector(".demo-frame");
+    mockTT.addEventListener("mouseenter", () => demoFrame.classList.add("tt-hover"));
+    mockTT.addEventListener("mouseleave", () => demoFrame.classList.remove("tt-hover"));
 
     document.addEventListener("click", (e) => {
       if (!e.target.closest(".demo-flag") && !e.target.closest(".mock-tt")) closeTooltip();
