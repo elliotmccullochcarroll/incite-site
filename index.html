@@ -1045,6 +1045,99 @@
       footer { padding: 24px; }
       .install-card { padding: 36px 24px; }
     }
+
+    /* ── Download password modal ── */
+    button.btn-primary {
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .dl-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 16, 12, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s;
+    }
+    .dl-modal.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .dl-modal-card {
+      background: var(--bg-card);
+      border-radius: 14px;
+      padding: 32px 32px 28px;
+      width: calc(100% - 48px);
+      max-width: 380px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+      transform: translateY(8px);
+      transition: transform 0.18s;
+    }
+    .dl-modal.open .dl-modal-card { transform: translateY(0); }
+    .dl-modal-card h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .dl-modal-card p {
+      margin: 0 0 20px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .dl-modal-card input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-family: inherit;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .dl-modal-card input:focus { border-color: var(--accent); }
+    .dl-error {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #C42A2A;
+      min-height: 18px;
+    }
+    .dl-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+      justify-content: flex-end;
+    }
+    .dl-actions button {
+      padding: 11px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      border-radius: 10px;
+      cursor: pointer;
+      border: none;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .dl-cancel {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border) !important;
+    }
+    .dl-cancel:hover { color: var(--text); border-color: rgba(0,0,0,0.14) !important; }
+    .dl-submit {
+      background: var(--accent);
+      color: #fff;
+    }
+    .dl-submit:hover { background: #B35525; }
+    .dl-submit:disabled { opacity: 0.6; cursor: wait; }
   </style>
 </head>
 <body>
@@ -1065,7 +1158,7 @@
       InCite flags the sentences in every AI response that are most likely to be wrong - citations, statistics, dates, and claims - before you act on them.
     </p>
     <div class="cta-row">
-      <a class="btn-primary" href="incite.zip" download>↓ &nbsp;Download InCite</a>
+      <button type="button" class="btn-primary download-trigger">↓ &nbsp;Download InCite</button>
       <a class="btn-secondary" href="#demo">See how it works</a>
     </div>
   </section>
@@ -1472,9 +1565,9 @@
             <span>Open <strong>claude.ai</strong> and start a conversation. Flagged sentences underline automatically.</span>
           </li>
         </ol>
-        <a class="btn-primary" href="incite.zip" style="width:100%;justify-content:center;font-size:15px;padding:15px 28px;">
+        <button type="button" class="btn-primary download-trigger" style="width:100%;justify-content:center;font-size:15px;padding:15px 28px;border:none;cursor:pointer;font-family:inherit;">
           ↓ &nbsp;Download InCite
-        </a>
+        </button>
       </div>
     </div>
   </section>
@@ -1506,7 +1599,74 @@
     setTimeout(() => {
       document.querySelector(".hero h1 em").classList.add("drawn");
     }, 900);
+
+    // Password-protected download
+    (function () {
+      const modal = document.getElementById("dl-modal");
+      const input = document.getElementById("dl-password");
+      const errorEl = document.getElementById("dl-error");
+      const submitBtn = document.getElementById("dl-submit");
+      const cancelBtn = document.getElementById("dl-cancel");
+
+      function open() {
+        input.value = "";
+        errorEl.textContent = "";
+        submitBtn.disabled = false;
+        modal.classList.add("open");
+        setTimeout(() => input.focus(), 60);
+      }
+      function close() {
+        modal.classList.remove("open");
+      }
+      async function submit() {
+        const pw = input.value;
+        if (!pw) return;
+        errorEl.textContent = "";
+        submitBtn.disabled = true;
+        try {
+          const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(pw));
+          const hex = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+          const url = "incite-" + hex.slice(0, 16) + ".zip";
+          const head = await fetch(url, { method: "HEAD", cache: "no-store" });
+          if (!head.ok) {
+            errorEl.textContent = "Incorrect password.";
+            submitBtn.disabled = false;
+            return;
+          }
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "incite.zip";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          close();
+        } catch (e) {
+          errorEl.textContent = "Something went wrong. Please try again.";
+          submitBtn.disabled = false;
+        }
+      }
+
+      document.querySelectorAll(".download-trigger").forEach(b => b.addEventListener("click", open));
+      submitBtn.addEventListener("click", submit);
+      cancelBtn.addEventListener("click", close);
+      input.addEventListener("keydown", e => { if (e.key === "Enter") submit(); });
+      modal.addEventListener("click", e => { if (e.target === modal) close(); });
+      document.addEventListener("keydown", e => { if (e.key === "Escape" && modal.classList.contains("open")) close(); });
+    })();
   </script>
+
+  <div class="dl-modal" id="dl-modal" role="dialog" aria-modal="true" aria-labelledby="dl-title">
+    <div class="dl-modal-card">
+      <h3 id="dl-title">Password required</h3>
+      <p>Enter the access password to download InCite.</p>
+      <input type="password" id="dl-password" autocomplete="off" spellcheck="false" placeholder="Password" />
+      <div class="dl-error" id="dl-error"></div>
+      <div class="dl-actions">
+        <button type="button" class="dl-cancel" id="dl-cancel">Cancel</button>
+        <button type="button" class="dl-submit" id="dl-submit">Unlock</button>
+      </div>
+    </div>
+  </div>
 
 </body>
 </html>
