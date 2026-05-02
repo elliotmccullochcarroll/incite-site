@@ -1601,7 +1601,7 @@
     }, 900);
 
     // Password-protected download
-    (function () {
+    document.addEventListener("DOMContentLoaded", function () {
       const modal = document.getElementById("dl-modal");
       const input = document.getElementById("dl-password");
       const errorEl = document.getElementById("dl-error");
@@ -1652,7 +1652,7 @@
       input.addEventListener("keydown", e => { if (e.key === "Enter") submit(); });
       modal.addEventListener("click", e => { if (e.target === modal) close(); });
       document.addEventListener("keydown", e => { if (e.key === "Escape" && modal.classList.contains("open")) close(); });
-    })();
+    });
   </script>
 
   <div class="dl-modal" id="dl-modal" role="dialog" aria-modal="true" aria-labelledby="dl-title">
